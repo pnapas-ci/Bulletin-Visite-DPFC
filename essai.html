@@ -24,21 +24,24 @@ var ESSAI = (function () {
   function norm(s) { return String(s || '').toUpperCase().replace(/O/g, '0').replace(/[IL]/g, '1').replace(/U/g, 'V').replace(/[^0-9A-Z]/g, ''); }
   function grp(s, k) { return s.match(new RegExp('.{1,' + k + '}', 'g')).join('-'); }
   function idNorm(id) { return norm(id).replace(/^ESSA1/, ''); }
-  function code(secretHex, id) { return grp(b32(hmac(hex2b(secretHex), utf8('DPFC-ESSAI-ACTIVATION|' + idNorm(id))), 10), 5); }
+  var ANNEE = '2026-2027'; // année scolaire couverte par le code (jusqu'au 31 août 2027)
+  function code(secretHex, id, annee) { return grp(b32(hmac(hex2b(secretHex), utf8('DPFC-ESSAI-ACTIVATION|' + (annee || ANNEE) + '|' + idNorm(id))), 10), 5); }
   function newId() { var r = new Uint8Array(8); (window.crypto || window.msCrypto).getRandomValues(r); return 'ESSAI-' + grp(b32(r, 8), 4); }
-  function check(secretHex, id, c) { return norm(c) === norm(code(secretHex, id)); }
-  return { code: code, check: check, newId: newId, norm: norm, idNorm: idNorm, sha256: sha256 };
+  function check(secretHex, id, c, annee) { return norm(c) === norm(code(secretHex, id, annee)); }
+  return { ANNEE: ANNEE, code: code, check: check, newId: newId, norm: norm, idNorm: idNorm, sha256: sha256 };
 })();
 
 (function () {
-  var FIN = new Date('2026-11-23T23:59:59').getTime(), K = 'dpfc_essai_vu', KID = 'dpfc_essai_id', KC = 'dpfc_essai_code', S = 'ce7d9f2fab6ba0fd3f210f8da4af82192f4f059847b0718ba3c0b9d6d2248ea4';
+  var FIN = new Date('2026-11-23T23:59:59').getTime(), FINA = new Date('2027-08-31T23:59:59').getTime(), K = 'dpfc_essai_vu', KID = 'dpfc_essai_id', KC = 'dpfc_essai_code', S = 'ce7d9f2fab6ba0fd3f210f8da4af82192f4f059847b0718ba3c0b9d6d2248ea4';
   function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   var id = get(KID); if (!id || !/^ESSAI-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(id)) { id = ESSAI.newId(); set(KID, id); }
-  var actif = ESSAI.check(S, id, get(KC) || '');
-  var now = Date.now(), vu = +get(K) || 0;
-  var exp = !actif && (now > FIN || vu > FIN || (vu && now < vu - 36 * 3600 * 1000));
-  if (now > vu) set(K, String(now)); if (exp) set(K, String(Math.max(vu, FIN + 1)));
+  var now = Date.now(), vu = +get(K) || 0, recule = vu && now < vu - 36 * 3600 * 1000;
+  var code = ESSAI.check(S, id, get(KC) || '');                       // code de l'année scolaire 2026-2027
+  var finAnnee = code && (now > FINA || vu > FINA);                    // code expiré le 31 août 2027
+  var actif = code && !finAnnee && !recule;
+  var exp = !actif && (now > FIN || vu > FIN || recule || finAnnee);
+  if (now > vu) set(K, String(now)); if (exp && !code) set(K, String(Math.max(vu, FIN + 1))); if (finAnnee) set(K, String(Math.max(vu, FINA + 1)));
   window.__ESSAI_EXPIRE = exp; window.__ESSAI_ID = id;
   var css = document.createElement('style');
   css.textContent = (exp ? 'body>*:not(#essai-exp){display:none!important}' : '') + '#essai-band{position:sticky;top:0;z-index:9999;background:#7a4b00;color:#fff;font:600 13px system-ui,sans-serif;text-align:center;padding:6px 10px}#essai-band.ok{background:#1e5b3a}#essai-band button,#essai-exp button{font:inherit;cursor:pointer}#essai-band button{background:transparent;color:#fff;border:1px solid #fff;border-radius:6px;padding:1px 8px;margin-left:6px}';
@@ -52,25 +55,25 @@ var ESSAI = (function () {
   }
   function brancher(onOk) {
     var b = document.getElementById('essai-ok'), i = document.getElementById('essai-code'), m = document.getElementById('essai-msg');
-    function go() { if (ESSAI.check(S, id, i.value)) { set(KC, ESSAI.norm(i.value)); m.style.color = '#1e5b3a'; m.textContent = 'Code accepté : l’outil est activé sur cet appareil.'; setTimeout(onOk, 700); } else { m.style.color = '#b42318'; m.textContent = 'Code incorrect pour cet identifiant. Vérifiez la saisie (10 caractères).'; } }
+    function go() { if (ESSAI.check(S, id, i.value)) { set(KC, ESSAI.norm(i.value)); finAnnee = false; m.style.color = '#1e5b3a'; m.textContent = 'Code accepté : l’outil est activé sur cet appareil jusqu’au 31 août 2027.'; setTimeout(onOk, 700); } else { m.style.color = '#b42318'; m.textContent = 'Code incorrect pour cet identifiant. Vérifiez la saisie (10 caractères).'; } }
     b.addEventListener('click', go); i.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
   }
   function poser() {
     if (exp) {
-      document.body.innerHTML = '<div id="essai-exp" style="max-width:520px;margin:10vh auto;padding:24px;font:15px system-ui,sans-serif;text-align:center;border:1px solid #ccc;border-radius:12px;background:#fff;color:#1f2933">' + boite('Version d’essai terminée', 'La période d’essai du « Bulletin de visite DPFC provisoire » s’est terminée le dimanche 23 novembre 2026. Pour continuer sur cet appareil, saisissez le code d’activation reçu de la DPFC.') + '</div>';
+      document.body.innerHTML = '<div id="essai-exp" style="max-width:520px;margin:10vh auto;padding:24px;font:15px system-ui,sans-serif;text-align:center;border:1px solid #ccc;border-radius:12px;background:#fff;color:#1f2933">' + boite(finAnnee ? 'Code d’activation expiré' : 'Version d’essai terminée', finAnnee ? 'Le code d’activation de cet appareil était valable pour l’année scolaire 2026-2027, jusqu’au 31 août 2027. Demandez à la DPFC un code pour la nouvelle année scolaire.' : 'La période d’essai du « Bulletin de visite DPFC provisoire » s’est terminée le dimanche 23 novembre 2026. Pour continuer sur cet appareil, saisissez le code d’activation reçu de la DPFC (valable pour l’année scolaire 2026-2027, jusqu’au 31 août 2027).') + '</div>';
       brancher(function () { location.reload(); }); return;
     }
     var band = document.createElement('div'); band.id = 'essai-band';
-    if (actif) { band.className = 'ok'; band.textContent = 'Version activée sur cet appareil – identifiant ' + id + '.'; }
+    if (actif) { band.className = 'ok'; band.textContent = 'Version activée sur cet appareil jusqu’au 31 août 2027 – identifiant ' + id + '.'; }
     else { band.innerHTML = 'Version d’essai – utilisable jusqu’au dimanche 23 novembre 2026. Identifiant de l’appareil : <b style="user-select:all">' + id + '</b><button type="button" id="essai-saisir">Saisir un code</button>'; }
     document.body.insertBefore(band, document.body.firstChild);
     var bs = document.getElementById('essai-saisir');
     if (bs) bs.addEventListener('click', function () {
       var d = document.createElement('div'); d.id = 'essai-dlg'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true');
       d.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px';
-      d.innerHTML = '<div style="max-width:460px;width:100%;padding:22px;font:15px system-ui,sans-serif;text-align:center;border-radius:12px;background:#fff;color:#1f2933">' + boite('Activer l’outil sur cet appareil', 'Le code d’activation est lié à cet appareil. Une fois activé, l’outil reste utilisable après la fin de l’essai.') + '<button type="button" id="essai-fermer" style="margin-top:6px;padding:7px 14px;border:1px solid #9aa5b1;border-radius:8px;background:#fff">Fermer</button></div>';
+      d.innerHTML = '<div style="max-width:460px;width:100%;padding:22px;font:15px system-ui,sans-serif;text-align:center;border-radius:12px;background:#fff;color:#1f2933">' + boite('Activer l’outil sur cet appareil', 'Le code d’activation est lié à cet appareil. Une fois activé, l’outil reste utilisable après la fin de l’essai, jusqu’au 31 août 2027 (fin de l’année scolaire 2026-2027), en ligne comme hors ligne.') + '<button type="button" id="essai-fermer" style="margin-top:6px;padding:7px 14px;border:1px solid #9aa5b1;border-radius:8px;background:#fff">Fermer</button></div>';
       document.body.appendChild(d); document.getElementById('essai-fermer').addEventListener('click', function () { d.remove(); });
-      brancher(function () { d.remove(); band.className = 'ok'; band.textContent = 'Version activée sur cet appareil – identifiant ' + id + '.'; });
+      brancher(function () { d.remove(); band.className = 'ok'; band.textContent = 'Version activée sur cet appareil jusqu’au 31 août 2027 – identifiant ' + id + '.'; });
       document.getElementById('essai-code').focus();
     });
   }
@@ -4617,5 +4620,5 @@ if (S.fiches.some(x => x.id === 'essai-ndja')) { S.fiches = S.fiches.filter(x =>
 render();
 </script>
 <script>/* Site dpfc.ci : installation sur le téléphone et fonctionnement hors connexion */
-(function () { try { if (location.protocol === 'https:' ) { const l = document.createElement('link'); l.rel = 'manifest'; l.href = 'manifest.webmanifest'; document.head.appendChild(l); if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {}); } } catch (e) {} })();</script>
+(function () { try { if (location.protocol === 'https:' ) { const l = document.createElement('link'); l.rel = 'manifest'; l.href = 'manifest-essai.webmanifest'; document.head.appendChild(l); if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {}); } } catch (e) {} })();</script>
 </body></html>

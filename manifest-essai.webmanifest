@@ -1,0 +1,2 @@
+{ "name": "Bulletin de visite DPFC – version d’essai", "short_name": "Bulletin DPFC essai", "start_url": "./essai.html", "scope": "./", "display": "standalone", "background_color": "#ffffff", "theme_color": "#7a4b00", "lang": "fr",
+  "icons": [{ "src": "icone.svg", "sizes": "any", "type": "image/svg+xml" }] }
