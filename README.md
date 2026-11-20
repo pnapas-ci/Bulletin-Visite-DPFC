@@ -3,7 +3,7 @@
 Outil numérique de rédaction des bulletins de visite de classe (DPFC – PNAPAS), utilisable en ligne et hors ligne.
 
 - **Application** : `index.html` (page d'accueil du site)
-- **Version d'essai** : `essai.html`, utilisable jusqu'au dimanche 23 novembre 2026 inclus, ensuite bloquée ; aucune donnée n'est envoyée sur la plateforme.
+- **Version d'essai** : `essai.html`, utilisable jusqu'au dimanche 23 novembre 2026 inclus. Chaque appareil reçoit un identifiant (ESSAI-XXXX-XXXX), affiché en haut de l'écran. Après l'essai, l'outil se débloque sur l'appareil avec le code d'activation que la DPFC fabrique à partir de cet identifiant.
 - **Téléchargements** (dossier `telechargements/`) : fichier hors ligne, version d'essai et paquet du site.
 - **Serveur de la plateforme** : `Code_serveur_Google_Apps_Script.gs` (voir `LISEZ-MOI.txt`).
 
