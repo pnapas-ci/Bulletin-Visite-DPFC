@@ -1,2 +1,21 @@
-{ "name": "Bulletin de visite DPFC provisoire", "short_name": "Bulletin DPFC", "start_url": "./", "display": "standalone", "background_color": "#ffffff", "theme_color": "#1f4e79", "lang": "fr",
-  "icons": [{ "src": "icone.svg", "sizes": "any", "type": "image/svg+xml" }] }
+{
+  "id": "./",
+  "name": "Bulletin de visite DPFC provisoire",
+  "short_name": "Bulletin DPFC",
+  "description": "Rédaction des bulletins de visite de classe (DPFC – PNAPAS), en ligne et hors ligne.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#1f4e79",
+  "lang": "fr",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icone-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icone.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

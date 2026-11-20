@@ -1,2 +1,46 @@
-{ "name": "Bulletin de visite DPFC – version d’essai", "short_name": "Bulletin DPFC essai", "start_url": "./essai.html", "scope": "./", "display": "standalone", "background_color": "#ffffff", "theme_color": "#7a4b00", "lang": "fr",
-  "icons": [{ "src": "icone.svg", "sizes": "any", "type": "image/svg+xml" }] }
+{
+  "id": "./essai.html",
+  "name": "Bulletin de visite DPFC – version d’essai",
+  "short_name": "Bulletin DPFC essai",
+  "description": "Version d’essai du bulletin de visite DPFC, en ligne et hors ligne.",
+  "start_url": "./essai.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#7a4b00",
+  "lang": "fr",
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "icone-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icone-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icone.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

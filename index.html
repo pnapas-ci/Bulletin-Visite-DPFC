@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Bulletin de visite DPFC provisoire</title>
+<!doctype html><html lang="fr"><head><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1f4e79"><link rel="icon" type="image/svg+xml" href="icone.svg"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Bulletin DPFC"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Bulletin de visite DPFC provisoire</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap">
 <style>
@@ -4539,5 +4539,31 @@ if (S.fiches.some(x => x.id === 'essai-ndja')) { S.fiches = S.fiches.filter(x =>
 render();
 </script>
 <script>/* Site dpfc.ci : installation sur le téléphone et fonctionnement hors connexion */
-(function () { try { if (location.protocol === 'https:' ) { const l = document.createElement('link'); l.rel = 'manifest'; l.href = 'manifest.webmanifest'; document.head.appendChild(l); if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {}); } } catch (e) {} })();</script>
+(function () { try { if (location.protocol === 'https:' ) { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {}); } } catch (e) {} })();</script>
+<script>/* Installation de l'application (smartphone et ordinateur) */
+(function () {
+  var K = 'dpfc_install_ferme', evt = null;
+  function installee() { return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
+  function ferme() { try { var t = +localStorage.getItem(K) || 0; return Date.now() - t < 7 * 864e5; } catch (e) { return false; } }
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var css = document.createElement('style');
+  css.textContent = '#dpfc-install{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#eaf2fa;color:#12324f;border-bottom:1px solid #b9d0e6;padding:8px 12px;font:14px system-ui,sans-serif}#dpfc-install b{font-weight:700}#dpfc-install .t{flex:1 1 220px}#dpfc-install button{font:600 14px system-ui,sans-serif;border-radius:8px;padding:7px 14px;cursor:pointer}#dpfc-install .go{background:#1f4e79;color:#fff;border:0}#dpfc-install .x{background:transparent;border:1px solid #8fb0cf;color:#12324f;padding:6px 10px}@media (prefers-color-scheme:dark){#dpfc-install{background:#16283a;color:#e3eef8;border-color:#2b4864}#dpfc-install .x{color:#e3eef8;border-color:#4a6c8c}}';
+  document.head.appendChild(css);
+  function montrer(html, onGo) {
+    if (installee() || ferme() || document.getElementById('dpfc-install')) return;
+    var d = document.createElement('div'); d.id = 'dpfc-install'; d.setAttribute('role', 'region'); d.setAttribute('aria-label', 'Installer l’application');
+    d.innerHTML = '<span class="t">' + html + '</span>' + (onGo ? '<button type="button" class="go">Installer</button>' : '') + '<button type="button" class="x" aria-label="Fermer">Plus tard</button>';
+    var band = document.getElementById('essai-band'); if (band && band.parentNode) band.parentNode.insertBefore(d, band.nextSibling); else document.body.insertBefore(d, document.body.firstChild);
+    if (onGo) d.querySelector('.go').addEventListener('click', onGo);
+    d.querySelector('.x').addEventListener('click', function () { try { localStorage.setItem(K, String(Date.now())); } catch (e) {} d.remove(); });
+  }
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); evt = e;
+    var poser = function () { if (window.__ESSAI_EXPIRE) return; montrer('<b>Installer l’application</b> sur cet appareil : une icône sur l’écran d’accueil ou le bureau, une fenêtre à part, et l’utilisation sans connexion.', function () { evt.prompt(); evt.userChoice.then(function () { var d = document.getElementById('dpfc-install'); if (d) d.remove(); evt = null; }); }); };
+    if (document.body) poser(); else document.addEventListener('DOMContentLoaded', poser);
+  });
+  window.addEventListener('appinstalled', function () { var d = document.getElementById('dpfc-install'); if (d) d.remove(); });
+  if (ios && !installee()) document.addEventListener('DOMContentLoaded', function () { if (!window.__ESSAI_EXPIRE) montrer('<b>Installer sur iPhone ou iPad :</b> dans Safari, touchez le bouton Partager <span aria-hidden="true">⬆︎</span>, puis « Sur l’écran d’accueil ».', null); });
+})();
+</script>
 </body></html>
