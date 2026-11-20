@@ -1,0 +1,2 @@
+{ "name": "Bulletin de visite DPFC provisoire", "short_name": "Bulletin DPFC", "start_url": "./", "display": "standalone", "background_color": "#ffffff", "theme_color": "#1f4e79", "lang": "fr",
+  "icons": [{ "src": "icone.svg", "sizes": "any", "type": "image/svg+xml" }] }

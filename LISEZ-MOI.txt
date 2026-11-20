@@ -1,0 +1,27 @@
+BULLETIN DE VISITE DPFC PROVISOIRE – MISE EN LIGNE SUR dpfc.ci
+
+Contenu du dossier
+- index.html ................................. l'application (grilles, bilans, plateforme)
+- sw.js, manifest.webmanifest, icone.svg ..... installation sur téléphone et fonctionnement sans connexion
+- Code_serveur_Google_Apps_Script.gs ......... le serveur gratuit qui reçoit les bulletins chiffrés
+
+Étape 1 – Créer le serveur (15 minutes, compte Google de la DPFC)
+1. Créer une feuille Google Sheets nommée « Plateforme bulletin DPFC ».
+2. Menu Extensions > Apps Script ; effacer le contenu et coller tout le fichier Code_serveur_Google_Apps_Script.gs ; Enregistrer.
+3. Déployer > Nouveau déploiement > type « Application Web » ; Exécuter en tant que : Moi ; Qui a accès : Tout le monde ; Déployer ; autoriser.
+4. Copier l'URL de l'application Web (elle se termine par /exec).
+
+Étape 2 – Intégrer l'adresse du serveur
+Ouvrir index.html avec un éditeur de texte, chercher la ligne
+    const SERVEUR_DPFC = '';
+et coller l'URL entre les apostrophes, par exemple
+    const SERVEUR_DPFC = 'https://script.google.com/macros/s/XXXX/exec';
+Enregistrer.
+
+Étape 3 – Publier sur dpfc.ci
+Demander à l'administrateur du site dpfc.ci de créer l'adresse https://bulletin.dpfc.ci (ou https://www.dpfc.ci/bulletin/)
+et d'y déposer les 4 fichiers index.html, sw.js, manifest.webmanifest, icone.svg (connexion HTTPS obligatoire).
+Le lien à diffuser est alors https://bulletin.dpfc.ci : aucun compte n'est demandé, seul le code d'accès personnel est nécessaire.
+
+Sur le téléphone : ouvrir le lien dans Chrome puis « Ajouter à l'écran d'accueil ». L'application s'ouvre ensuite même sans connexion
+(remplir, générer, enregistrer) ; l'envoi et la consultation se font dès que la connexion revient.
