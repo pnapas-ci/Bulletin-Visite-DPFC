@@ -7,7 +7,9 @@ Outil numérique de rédaction des bulletins de visite de classe (DPFC – PNAPA
 - **Téléchargements** (dossier `telechargements/`) : fichier hors ligne, version d'essai et paquet du site.
 - **Serveur de la plateforme** : `Code_serveur_Google_Apps_Script.gs` (voir `LISEZ-MOI.txt`).
 
-Installation (smartphone et ordinateur) : ouvrir le lien avec une connexion, puis
+Installation (smartphone et ordinateur) — mode d'emploi et codes QR : https://pnapas-ci.github.io/Bulletin-Visite-DPFC/installer.html
+
+Installation : ouvrir le lien avec une connexion, puis
 - **Android (Chrome)** : bouton « Installer » du bandeau bleu, ou menu ⋮ → « Installer l'application » ;
 - **iPhone / iPad (Safari)** : bouton Partager → « Sur l'écran d'accueil » ;
 - **Ordinateur (Chrome ou Edge)** : bouton « Installer » du bandeau bleu, ou icône d'installation au bout de la barre d'adresse.
