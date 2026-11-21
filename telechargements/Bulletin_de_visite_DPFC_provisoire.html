@@ -145,6 +145,9 @@ label.f.miss input,label.f.miss select,label.f.miss textarea{border-color:var(--
 .h-install a.btn{text-decoration:none;color:inherit;display:inline-flex;align-items:center}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .h-ico svg{stroke:var(--accent)}:root:not([data-theme="light"]) .h-stats b,:root:not([data-theme="light"]) .h-arrow{color:var(--accent)}:root:not([data-theme="light"]) .h-card:hover{border-color:var(--accent)}}
 :root[data-theme="dark"] .h-ico svg{stroke:var(--accent)}:root[data-theme="dark"] .h-stats b,:root[data-theme="dark"] .h-arrow{color:var(--accent)}
+#maj{background:#fff4d6;border-bottom:1px solid #e6c36a;color:#3d2c00}#maj .maj-in{max-width:980px;margin:0 auto;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.9rem}#maj .maj-in>span{flex:1 1 240px}#maj a.btn{text-decoration:none;color:inherit}
+#maj-ok{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px}.maj-box{background:var(--surface);color:var(--ink);border-radius:14px;max-width:520px;width:100%;max-height:85vh;overflow:auto;padding:20px}.maj-box h2{margin:0 0 6px;font-size:1.2rem}.maj-box ul{margin:4px 0 10px;padding-left:1.2em}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #maj{background:#3a3016;border-color:#6b5420;color:#f3e2b0}}
 .stepper{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;padding:8px 0 10px;margin-bottom:6px;border-bottom:1px solid var(--line)}
 .stepper .chip{padding:7px 13px}.stepper .stn{display:inline-flex;align-items:center;justify-content:center;width:1.35em;height:1.35em;border-radius:50%;font-size:.78em;background:var(--surface2);color:var(--ink);margin-right:2px}
 .stepper .chip[aria-pressed="true"] .stn{background:#fff;color:var(--brand)}.stc{font-size:.8rem;color:var(--muted)}
@@ -2144,10 +2147,80 @@ function homeView() {
       <div class="row">${!inst && !hors && window.__dpfcInstall ? '<button class="btn primary" data-act="install">Installer</button>' : ''}<button class="btn sm" data-act="copier-lien" data-v="${esc(lien)}">Copier le lien</button>${hors ? `<a class="btn sm" href="${esc(SITE_DPFC)}" target="_blank" rel="noopener">Ouvrir le site</a>` : ''}<a class="btn sm" href="${esc(SITE_DPFC + 'installer.html')}" target="_blank" rel="noopener">Mode d’emploi et codes QR</a></div>
       <span class="h-d">Lien de l’application : <b class="h-link">${esc(lien)}</b></span></div>
   </section>
-  <p class="hint h-foot">Les fiches restent sur cet appareil. Exportez régulièrement une sauvegarde depuis « Fiches enregistrées ».</p>`;
+  <p class="hint h-foot">Les fiches restent sur cet appareil. Exportez régulièrement une sauvegarde depuis « Fiches enregistrées ».</p>${majPied()}`;
 }
 window.addEventListener('dpfc-installable', () => { if (S.tab === 'home') render(); });
 window.addEventListener('appinstalled', () => { window.__dpfcInstall = null; if (S.tab === 'home') render(); });
+/* ========================= MISES À JOUR AUTOMATIQUES =========================
+   L'application compare sa version à celle publiée sur le site (version.json).
+   En ligne : la nouvelle version s'installe seule (à l'ouverture) ou d'un toucher ; les nouveautés s'affichent une fois.
+   Fichier hors ligne : un bandeau propose de télécharger la nouvelle version. */
+const APP_VERSION = '2026.11.21.2';
+const APP_HISTO = [{"version": "2026.11.21.2", "date": "2026-11-21", "notes": ["Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.", "Après chaque mise à jour, les nouveautés s’affichent une fois.", "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."]}, {"version": "2026.11.21.1", "date": "2026-11-21", "notes": ["Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.", "Page d’installation avec codes QR.", "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."]}, {"version": "2026.11.20.1", "date": "2026-11-20", "notes": ["Application installable sur smartphone et ordinateur ; utilisation hors ligne.", "Version d’essai avec identifiant d’appareil et code d’activation (jusqu’au 31 août 2027)."]}];
+const MAJ_BASE = () => location.protocol === 'file:' ? SITE_DPFC : './';
+const MAJ = { info: null, t0: Date.now(), last: 0 };
+const vNum = (v) => String(v || '').split('.').map(x => String(+x || 0).padStart(4, '0')).join('.');
+const plusRecente = (a, b) => vNum(a) > vNum(b);
+const verLib = (v) => { const m = String(v).match(/^(\d{4})\.(\d{2})\.(\d{2})(?:\.(\d+))?$/); return m ? `${m[3]}/${m[2]}/${m[1]}${m[4] ? ' (n° ' + m[4] + ')' : ''}` : v; };
+function majBandeau() {
+  let d = document.getElementById('maj'); const j = MAJ.info;
+  if (!j || !plusRecente(j.version, APP_VERSION)) { if (d) d.remove(); return; }
+  if (!d) { d = document.createElement('div'); d.id = 'maj'; d.setAttribute('role', 'status'); const m = document.querySelector('main'); m.parentNode.insertBefore(d, m); }
+  const file = location.protocol === 'file:'; const essai = typeof window.__ESSAI_ID === 'string';
+  const dl = SITE_DPFC + 'telechargements/' + (essai ? 'Bulletin_de_visite_DPFC_version_essai_7_jours.html' : 'Bulletin_de_visite_DPFC_provisoire.html');
+  d.innerHTML = `<div class="maj-in"><span><b>Nouvelle version disponible</b> (${esc(verLib(j.version))})${j.notes && j.notes.length ? ' : ' + esc(j.notes[0]) : ''}</span>
+    ${file ? `<a class="btn sm" href="${esc(dl)}" download>Télécharger la nouvelle version</a><a class="btn sm" href="${esc(SITE_DPFC + (essai ? 'essai.html' : ''))}" target="_blank" rel="noopener">Ouvrir la version en ligne</a>`
+      : '<button class="btn sm primary" data-act="maj-go">Mettre à jour maintenant</button>'}</div>`;
+}
+async function majAppliquer() {
+  toast('Mise à jour en cours…');
+  try { const r = navigator.serviceWorker && await navigator.serviceWorker.getRegistration(); if (r) await r.update(); } catch (e) {}
+  try { if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); } } catch (e) {}
+  if (typeof persistDraft === 'function') try { persistDraft(); } catch (e) {}
+  location.reload();
+}
+async function majVerifier(manuel) {
+  if (!/^(https?|file):$/.test(location.protocol)) return;
+  MAJ.last = Date.now();
+  try {
+    const r = await fetch(MAJ_BASE() + 'version.json?t=' + Date.now(), { cache: 'no-store' }); if (!r.ok) throw new Error(r.status);
+    const j = await r.json(); MAJ.info = j;
+    if (plusRecente(j.version, APP_VERSION)) {
+      const saisie = document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+      // à l'ouverture, en ligne : installation directe ; en cours de travail : bandeau
+      // garde-fou : une seule tentative automatique par version (évite une boucle si le site n'est pas encore à jour partout)
+      let dejaTente = false; try { const t = JSON.parse(localStorage.getItem('dpfc_maj_tentative') || '{}'); dejaTente = t.v === j.version && Date.now() - t.t < 30 * 60 * 1000; } catch (e) {}
+      if (location.protocol !== 'file:' && Date.now() - MAJ.t0 < 15000 && !saisie && !dejaTente) { try { localStorage.setItem('dpfc_maj_tentative', JSON.stringify({ v: j.version, t: Date.now() })); } catch (e) {} return majAppliquer(); }
+      majBandeau(); if (manuel) toast('Nouvelle version disponible.');
+    } else { majBandeau(); if (manuel) toast('L’application est à jour (version du ' + verLib(APP_VERSION) + ').'); }
+  } catch (e) { if (manuel) toast('Vérification impossible : pas de connexion. L’application reste utilisable hors ligne.'); }
+}
+// Nouveautés affichées une fois après une mise à jour
+function majNouveautes() {
+  let vu = ''; try { vu = localStorage.getItem('dpfc_version_vue') || ''; } catch (e) {}
+  try { localStorage.setItem('dpfc_version_vue', APP_VERSION); } catch (e) {}
+  if (!vu || !plusRecente(APP_VERSION, vu)) return;
+  const nouv = APP_HISTO.filter(h => plusRecente(h.version, vu));
+  if (!nouv.length) return;
+  const d = document.createElement('div'); d.id = 'maj-ok'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-labelledby', 'maj-ok-t');
+  d.innerHTML = `<div class="maj-box"><h2 id="maj-ok-t">Application mise à jour</h2><p class="hint">Version du ${esc(verLib(APP_VERSION))}. Vos fiches et vos réglages sont conservés.</p>
+    ${nouv.map(h => `<div class="rub">${esc(verLib(h.version))}</div><ul>${h.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>`).join('')}
+    <div class="row" style="justify-content:flex-end"><button class="btn primary" data-act="maj-ok">J’ai compris</button></div></div>`;
+  document.body.appendChild(d); d.querySelector('button').focus();
+}
+function majPied() {
+  return `<p class="hint h-foot">Version du ${esc(verLib(APP_VERSION))} · <button class="linkbtn" data-act="maj-check">Rechercher une mise à jour</button>${MAJ.info && plusRecente(MAJ.info.version, APP_VERSION) ? ' · <b>nouvelle version disponible</b>' : ''}</p>
+    <details class="degres h-foot"><summary>Nouveautés des dernières versions</summary>${APP_HISTO.slice(0, 5).map(h => `<div class="rub">${esc(verLib(h.version))}</div><ul>${h.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>`).join('')}</details>`;
+}
+document.addEventListener('click', (ev) => {
+  const b = ev.target.closest('[data-act="maj-go"],[data-act="maj-check"],[data-act="maj-ok"]'); if (!b) return;
+  ev.stopPropagation();
+  if (b.dataset.act === 'maj-go') majAppliquer(); else if (b.dataset.act === 'maj-check') majVerifier(true); else { const d = document.getElementById('maj-ok'); if (d) d.remove(); }
+}, true);
+setTimeout(() => { majNouveautes(); majVerifier(false); }, 1500);
+setInterval(() => majVerifier(false), 30 * 60 * 1000);
+window.addEventListener('online', () => majVerifier(false));
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && Date.now() - MAJ.last > 10 * 60 * 1000) majVerifier(false); });
 /* ========================= OUTILS ========================= */
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
