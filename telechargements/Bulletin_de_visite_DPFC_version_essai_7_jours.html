@@ -211,6 +211,17 @@ label.f.miss input,label.f.miss select,label.f.miss textarea{border-color:var(--
 .pv-box2{border:1px solid #333;padding:6px 8px;min-height:50px} .pv-right{text-align:right;margin:10px 0} .pv-small{font-size:11.5px}
 .pv-sign td{height:90px;width:33%;text-align:center} .pv-compact,.pv-compact td,.pv-compact th,.pv-compact .pv-grid td,.pv-compact .pv-small,.pv-compact .pv-head td{font-size:var(--fs)} .pv-compact .pv-t td,.pv-compact .pv-t th{padding:2px 4px} .pv-compact .pv-sign td{height:58px} .pv-compact .pv-title{font-size:calc(var(--fs) + 2px);margin:5px 0} .pv-compact table{margin:4px 0} .pv-compact .pv-box2{min-height:30px;padding:3px 6px} .pv-compact .pv-right{margin:4px 0}
 .pv-sec2 td{background:#cfcfcf;font-weight:700;font-size:14px} .pv-ul{margin:0;padding-left:16px} .pv-ul li{margin:1px 0} .pv-bilan td{font-size:12.5px;width:50%} .step.off{opacity:.62;background:var(--surface-2,rgba(0,0,0,.03))} .step.off .step-h{background:transparent} .pt.off{opacity:.5} .doclab{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;max-width:860px;margin:18px auto 8px} .doclab h3{font-size:1rem;margin:0} .paper h4{font-family:inherit;font-size:13.5px;margin:10px 0 2px} .paper ol{margin:0;padding-left:18px}
+.stepper{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;padding:8px 0 10px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.stepper .chip{padding:7px 13px}.stepper .stn{display:inline-flex;align-items:center;justify-content:center;width:1.35em;height:1.35em;border-radius:50%;font-size:.78em;background:var(--surface2);color:var(--ink);margin-right:2px}
+.stepper .chip[aria-pressed="true"] .stn{background:#fff;color:var(--brand)}.stc{font-size:.8rem;color:var(--muted)}
+.stepnav{display:flex;justify-content:space-between;gap:10px;margin:14px 0 4px}
+.ind-tab{display:grid;gap:6px;margin:8px 0}.irow{display:grid;grid-template-columns:minmax(120px,38%) 1fr 52px;gap:10px;align-items:center;font-size:.88rem}.irow b{text-align:right}.irow.tot{font-weight:700;color:var(--brand)}
+.ibar{display:block;height:10px;border-radius:6px;background:var(--surface2);overflow:hidden}.ibar>span{display:block;height:100%;background:var(--brand);border-radius:6px}
+.bil{border-top:1px solid var(--line);padding:10px 0}.bil-h{font-weight:700;margin-bottom:6px}.bil-f,.bil-a{border-radius:10px;padding:8px 10px;font-size:.88rem}.bil-f{background:var(--ok-soft)}.bil-a{background:var(--ko-soft)}
+.bil-t{font-size:.72rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}.bil-f .bil-t{color:var(--ok)}.bil-a .bil-t{color:var(--ko)}.bil-f b,.bil-a b{display:inline-block;min-width:3.2em;font-size:.78rem}
+.clot{list-style:none;padding:0;margin:6px 0;display:grid;gap:6px}.clot li{display:flex;gap:8px;align-items:center}.clot label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.rappelp ol{margin:4px 0 0;padding-left:1.2em}.rappelp li{margin:4px 0}
+@media (max-width:560px){.irow{grid-template-columns:1fr 46px}.irow .ibar{grid-column:1/-1;order:3}}
 .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
 /* bases / fiches */
 .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
@@ -2017,7 +2028,135 @@ const ACT_DETAILS = {
 ['Avançons en jouant', 'Chasse aux parts égales (division par partage)', 'Division par la méthode de l’échelle', 'Enigma', 'La carte de la multiplication', 'Le crack de la multiplication', 'Ma fortune'].forEach(a => { const L = ACTIVITES_SOUTIEN['Opérations (30 min)']; if (L && !L.includes(a)) L.push(a); });
 const actDetail = (name) => ACT_DETAILS[name] || ACT_DETAILS[Object.keys(ACT_DETAILS).find(k => k.toLowerCase() === String(name || '').toLowerCase())];
 </script>
-<script>/* ========================= OUTILS ========================= */
+<script>/* ========================= PARCOURS DE LA VISITE EN 4 ÉTAPES =========================
+   1 Renseignements · 2 Observation · 3 Bilan · 4 Conseils et conclusion (ou tout afficher).
+   Ajouts : synthèse chiffrée (indice de maîtrise), conseil en face de chaque point de défaillance,
+   appréciation retenue par l'encadreur, clôture de la visite, temps par moment didactique. */
+const ETAPES = [[1, 'Renseignements'], [2, 'Observation'], [3, 'Bilan'], [4, 'Conseils et conclusion']];
+const etapeDe = (f) => ((S.etape = S.etape || {})[f.kind]) || 1;
+const RET_LIB = { TS: 'très satisfaisante', S: 'satisfaisante', PS: 'peu satisfaisante', INS: 'insuffisante' };
+const RET_COURT = { TS: 'Très satisfaisant', S: 'Satisfaisant', PS: 'Peu satisfaisant', INS: 'Insatisfaisant' };
+const codeNote = (w) => { if (w === null || w === undefined) return ''; const a = Math.round(w * 10) / 10; return a >= 3.4 ? 'TS' : a >= 2.5 ? 'S' : a >= 1.5 ? 'PS' : 'INS'; };
+const conseilOf = (f, el) => ((f.conseils || {})[el.id] || '').trim() || el.rec;
+
+function comptage(f) {
+  let cot = 0, tot = 0; gridItems(f.kind, f).forEach(el => { if (el.extra) return; const j = justify(f, el); if (j.na) return; tot++; if (j.val) cot++; });
+  let pts = 0, ptsTot = 0; stepsOf(f).forEach(st => { const a = stepAuto(f, st); if (a.statut === 'NA') return; pts += a.ans || 0; ptsTot += a.n || 0; });
+  return { cot, tot, pts, ptsTot };
+}
+function stepperBar(f) {
+  const E = etapeDe(f); const c = comptage(f);
+  return `<nav class="stepper" aria-label="Étapes de la visite"><div class="chips">${ETAPES.map(([n, l]) => `<button class="chip" data-act="etape" data-v="${n}" aria-pressed="${E === n}"${E === n ? ' aria-current="step"' : ''}><span class="stn">${n}</span> ${l}</button>`).join('')}<button class="chip" data-act="etape" data-v="all" aria-pressed="${E === 'all'}">Tout afficher</button></div>
+    <span class="stc">${c.cot} / ${c.tot} éléments cotés · ${c.pts} / ${c.ptsTot} actions renseignées</span></nav>`;
+}
+function stepNav(f) {
+  const E = etapeDe(f); if (E === 'all') return '';
+  const prev = ETAPES.find(([n]) => n === E - 1), next = ETAPES.find(([n]) => n === E + 1);
+  return `<div class="stepnav">${prev ? `<button class="btn" data-act="etape" data-v="${prev[0]}">← ${prev[1]}</button>` : '<span></span>'}${next ? `<button class="btn primary" data-act="etape" data-v="${next[0]}">${next[1]} →</button>` : ''}</div>`;
+}
+
+/* Rappel des pratiques enseignantes attendues (mathématiques PNAPAS, CP1 au CE2) */
+function rappelPratiques(f) {
+  if (f.kind !== 'gen' || isAut(f) || isFr(f)) return '';
+  const niv = f.seance.niveau || f.ens.classe || '';
+  return `<details class="sec rappelp" data-sec="rappelp" ${S.open.rappelp === false ? '' : 'open'}><summary><h2>Pratiques enseignantes attendues${niv ? ' – ' + esc(niv) : ''} (mathématiques)</h2></summary><div class="body"><ol class="pv-ul">
+    <li><b>La manipulation.</b> Matériel prévu (cailloux, graines, capsules, bande numérique, matériel base 10…) en quantité suffisante ; consignes qui nomment le matériel et disent comment l’utiliser ; chaque apprenant(e) manipule seul(e), puis échange en petit groupe.</li>
+    <li><b>La schématisation.</b> Chaque apprenant(e) représente sur l’ardoise ou une feuille le résultat de sa manipulation avant le calcul ; l’enseignant(e) fait verbaliser quelques schématisations.</li>
+    <li><b>Le questionnement.</b> « Comment as-tu fait ? » pour expliquer, « Comment sais-tu que ta réponse est juste ? » pour justifier ; les apprenant(e)s échangent entre eux.</li></ol></div></details>`;
+}
+
+/* ---------- Étape 3 : synthèse chiffrée ---------- */
+function indiceRows(f) {
+  const out = {}; const sc = scaleOf(f);
+  gridItems(f.kind, f).forEach(el => { if (el.extra) return; const j = justify(f, el); const k = domKey(el); const r = out[k] = out[k] || { s: 0, n: 0, rubs: {} };
+    const rub = el.rub || el.dom || ''; const R = r.rubs[rub] = r.rubs[rub] || { s: 0, n: 0, forts: [], ame: [], nc: [] };
+    if (j.na) return; const v = j.val; if (!v) { R.nc.push(el.lib); return; }
+    const x = sc.find(s => s.k === v); if (!x || x.v === null) return; r.s += x.v; r.n++; R.s += x.v; R.n++;
+    (isBon(v) ? R.forts : R.ame).push({ v, lib: el.lib });
+  });
+  return out;
+}
+const pctTxt = (s, n) => n ? Math.round(100 * s / (4 * n)) + ' %' : '—';
+const barre = (s, n) => `<span class="ibar"><span style="width:${n ? Math.round(100 * s / (4 * n)) : 0}%"></span></span>`;
+function phasesTemps(f) {
+  const t = f.chrono || {}; const p = t.ph || {}; const m = (a, b) => { const x = toMin(a), y = toMin(b); return x === null || y === null ? null : (y - x + 1440) % 1440; };
+  const L = [['Présentation', p.pres || t.debut, p.dev], ['Développement', p.dev, p.eva], ['Évaluation', p.eva, t.fin]].map(([l, a, b]) => [l, m(a, b)]).filter(x => x[1] !== null);
+  return L.length ? L.map(([l, v]) => `${l.toLowerCase()} ${v} min`).join(' ; ') : '';
+}
+function synthSection(f) {
+  const R = indiceRows(f); const DL = { org: 'Organisation', ani: 'Animation', eva: 'Évaluation' };
+  let s = 0, n = 0; Object.values(R).forEach(r => { s += r.s; n += r.n; });
+  const sp = scoreParts(f); const c = comptage(f);
+  let html = `<p class="hint">Indice de maîtrise = somme des cotes (de 0 à 4) ÷ (nombre d’éléments cotés × 4), hors éléments non applicables.${c.tot - c.cot ? ` <b>${c.tot - c.cot} élément(s) non coté(s).</b>` : ''}</p>
+    <div class="ind-tab">${['org', 'ani', 'eva'].filter(k => R[k]).map(k => `<div class="irow"><span>${DL[k]}</span>${barre(R[k].s, R[k].n)}<b>${pctTxt(R[k].s, R[k].n)}</b></div>`).join('')}
+    <div class="irow tot"><span>Ensemble</span>${barre(s, n)}<b>${pctTxt(s, n)}</b></div></div>
+    ${sp.n ? `<p class="hint">Note pondérée : <b>${fmt1(sp.w)}/4</b> – pratiques enseignantes et maîtrise du contenu ${fmt1(sp.prat)}/4 (70 %) ; environnement et auxiliaires ${fmt1(sp.env)}/4 (30 %). Correspondance indicative : <b>${RET_COURT[codeNote(sp.w)]}</b>.</p>` : ''}`;
+  if (typeof pratiquesVisite === 'function') { const X = pratiquesVisite(f); if (X.etapes.length) html += `<div class="rub">Déroulé : actions attendues réalisées</div><div class="ind-tab">${X.etapes.map(e => `<div class="irow"><span>${esc(e.label)}</span><span class="ibar"><span style="width:${Math.round(e.value)}%"></span></span><b>${Math.round(e.value)} %</b></div>`).join('')}</div>`; }
+  const pt = phasesTemps(f); if (pt) html += `<p class="hint">Temps par moment didactique : ${esc(pt)}.</p>`;
+  ['org', 'ani', 'eva'].filter(k => R[k]).forEach(k => {
+    html += `<div class="rub" style="color:var(--accent)">${DL[k]} · ${pctTxt(R[k].s, R[k].n)}</div>`;
+    Object.entries(R[k].rubs).forEach(([rub, r]) => {
+      if (!r.n && !r.nc.length) return;
+      html += `<div class="bil"><div class="bil-h">${esc(rub)} <span class="hint">${pctTxt(r.s, r.n)}</span></div><div class="grid">
+        <div class="bil-f"><div class="bil-t">Points forts</div>${r.forts.length ? r.forts.map(x => `<div><b>${x.v}</b> ${esc(x.lib)}</div>`).join('') : '<i>Aucun</i>'}</div>
+        <div class="bil-a"><div class="bil-t">Points à améliorer</div>${r.ame.length ? r.ame.map(x => `<div><b>${x.v}</b> ${esc(x.lib)}</div>`).join('') : '<i>Aucun</i>'}</div></div>
+        ${r.nc.length ? `<p class="hint">Non coté : ${r.nc.map(esc).join(' ; ')}</p>` : ''}</div>`;
+    });
+  });
+  return sec('synth', 'Synthèse chiffrée', n ? 'ensemble ' + pctTxt(s, n) : 'aucun élément coté', html);
+}
+
+/* ---------- Étape 4 : conseils en face de chaque défaillance, appréciation retenue, clôture ---------- */
+function defaillances(f) { return gridItems(f.kind, f).filter(el => { const j = justify(f, el); const v = j.val || j.sugg; return v && v !== 'NA' && !j.na && !isBon(v); }).map(el => ({ el, v: justify(f, el).val || justify(f, el).sugg })); }
+function conseilsSection(f) {
+  const D = defaillances(f); f.conseils = f.conseils || {};
+  const html = D.length ? `<p class="hint">En face de chaque point de défaillance, rédigez votre conseil. Le champ vide reprend la recommandation du guide (affichée en gris) ; vos conseils remplacent ces recommandations dans la rédaction et dans le bilan.</p>
+    <div class="row"><button class="btn sm" data-act="conseils-guide">Reprendre les recommandations du guide dans les champs vides</button></div>
+    ${D.map(({ el, v }) => `<div class="el"><div class="el-h"><span class="lib"><span class="status st-N">${v}</span> ${esc(el.lib)}</span><span class="hint">${esc(el.rub || el.dom || '')}</span></div>
+      <textarea class="inp" data-k="conseil" data-e="${el.id}" rows="2" placeholder="${esc(el.rec)}">${esc(f.conseils[el.id] || '')}</textarea></div>`).join('')}`
+    : '<div class="empty">Aucun point de défaillance (PS, INS ou INEX) pour l’instant.</div>';
+  return sec('conseils', 'Conseils, suggestions ou recommandations', `${D.length} point${D.length > 1 ? 's' : ''} de défaillance`, html);
+}
+function clotureSection(f) {
+  const sp = scoreParts(f); const ind = codeNote(sp.w); const c = comptage(f); const cl = f.cloture = f.cloture || {};
+  const ret = f.appRetenue || '';
+  const ok = (b) => `<span class="status ${b ? 'st-R' : 'st-0'}">${b ? '✓' : '•'}</span>`;
+  const html = `<p class="hint">${sp.n ? `Note pondérée ${fmt1(sp.w)}/4 – correspondance indicative : <b>${RET_COURT[ind]}</b>. ` : ''}L’appréciation retenue reste celle de l’encadreur pédagogique ; elle est reprise dans l’appréciation générale.</p>
+    <div class="chips" role="group" aria-label="Appréciation retenue">${Object.entries(RET_COURT).map(([k, l]) => `<button class="chip" data-act="app-ret" data-v="${k}" aria-pressed="${ret === k}">${l}${!ret && k === ind ? ' (indicative)' : ''}</button>`).join('')}</div>
+    <div class="rub">Clôture de la visite</div>
+    <ul class="clot">
+      <li>${ok(c.cot === c.tot)} Tous les éléments de la grille sont cotés${c.cot === c.tot ? '' : ` (${c.tot - c.cot} non coté${c.tot - c.cot > 1 ? 's' : ''})`}</li>
+      <li>${ok(!!ret)} L’appréciation générale est retenue</li>
+      <li><label>${ok(!!cl.entretien)} <input type="checkbox" data-act="clot" data-v="entretien" ${cl.entretien ? 'checked' : ''}> L’entretien avec l’enseignant(e) est achevé</label></li>
+      <li><label>${ok(!!cl.emarge)} <input type="checkbox" data-act="clot" data-v="emarge" ${cl.emarge ? 'checked' : ''}> Le bulletin de visite est achevé et émargé</label></li></ul>
+    ${c.cot === c.tot && ret && cl.entretien && cl.emarge ? '<div class="callout">Visite clôturée : enregistrez la fiche et produisez le bulletin.</div>' : ''}`;
+  return sec('cloture', 'Appréciation retenue et clôture', ret ? RET_COURT[ret] : (sp.n ? 'indicatif : ' + RET_COURT[ind] : ''), html);
+}
+// Applique l'appréciation retenue au texte de l'appréciation générale
+function appliquerRetenue(f) {
+  const a = f.redac && f.redac.appreciation; if (!a || !f.appRetenue) return;
+  f.redac.appreciation = a.replace(/^(Prestation|Mise en œuvre) (très satisfaisante|satisfaisante|peu satisfaisante|insuffisante)/, (m, p) => `${p} ${RET_LIB[f.appRetenue]}`);
+}
+
+/* ---------- Mise en page du formulaire selon l'étape ---------- */
+function formSteps(f) {
+  const gen = f.kind === 'gen';
+  const P = {
+    1: () => ensSection(f) + (gen ? seanceSection(f) : souSeanceSection(f)) + dureeSection(f) + (gen ? '' : planSection(f)),
+    2: () => rappelPratiques(f) + stepsSection(f) + grilleSection(f),
+    3: () => synthSection(f) + redacSection(f),
+    4: () => conseilsSection(f) + clotureSection(f) + signSection(f)
+  };
+  const E = etapeDe(f);
+  return stepperBar(f) + (E === 'all' ? [1, 2, 3, 4].map(k => P[k]()).join('') : P[E]()) + stepNav(f);
+}
+// Trouve l'étape qui contient un élément (pour les liens « informations manquantes »)
+function etapeDeCible(f, selector) {
+  const probe = document.createElement('div');
+  for (const k of [1, 2, 3, 4]) { const keep = S.etape[f.kind]; S.etape[f.kind] = k; probe.innerHTML = formSteps(f); S.etape[f.kind] = keep; if (probe.querySelector(selector)) return k; }
+  return 'all';
+}
+/* ========================= OUTILS ========================= */
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -2320,20 +2459,22 @@ function redigerGen(f) {
     const j = justify(f, el); const v = j.val || j.sugg; if (!v || v === 'NA') return;
     const k = domKey(el); const sc = scaleOf(f).find(x => x.k === v); sum += sc.v; cnt++;
     if (isBon(v)) R[k].pos.push({ v: sc.v, t: `${el.lib} (${v})`, pool: poolOf(el) });
-    else { R[k].ame.push({ v: sc.v, t: `${el.lib} (${v})`, rec: el.rec, pool: poolOf(el) }); weak.push({ t: el.lib, v: sc.v, pool: poolOf(el) }); }
+    else { R[k].ame.push({ v: sc.v, t: `${el.lib} (${v})`, rec: conseilOf(f, el), perso: !!((f.conseils || {})[el.id] || '').trim(), pool: poolOf(el) }); weak.push({ t: el.lib, v: sc.v, pool: poolOf(el) }); }
   });
   const N = 3;
   ['org', 'ani', 'eva'].forEach(k => {
     const pos = pick70(R[k].pos.sort((a, b) => b.v - a.v), N), ame = pick70(R[k].ame.sort((a, b) => a.v - b.v), N);
     const lst = (a, more) => a.length ? a.slice(0, N).map(x => '- ' + x.t).join('\n') + (a.length > N ? `\n- … et ${a.length - N} autre${a.length - N > 1 ? 's' : ''} ${a.length - N > 1 ? more : more.replace('éléments', 'élément').replace('satisfaisants', 'satisfaisant')}` : '') : '- Néant.';
     f.redac[k] = { pos: lst(pos, 'éléments satisfaisants (voir bilan).'), ame: lst(ame, 'éléments à améliorer (voir bilan).'),
-      rec: ame.length ? [...new Set(ame.slice(0, 3).map(x => x.rec))].map(x => '- ' + x).join('\n') : '- Maintenir ces bonnes pratiques.' };
+      // les conseils rédigés par l'encadreur passent en premier, puis les recommandations du guide
+      rec: ame.length ? [...new Set(ame.filter(x => x.perso).map(x => x.rec).concat(ame.slice(0, 3).map(x => x.rec)))].map(x => '- ' + x).join('\n') : '- Maintenir ces bonnes pratiques.' };
   });
   if (cnt) {
     const sp = scoreParts(f); const wk = pick70(weak.sort((a, b) => a.v - b.v), 4).slice(0, 4).map(x => x.t);
     f.redac.appreciation = `Prestation ${labNote(sp.w)} (${noteLigne(sp)}). ` +
       (wk.length ? `Les efforts doivent porter sur : ${wk.map(lc).join(', ')}.` : 'Poursuivre dans cette dynamique.');
   } else f.redac.appreciation = '';
+  appliquerRetenue(f);
 }
 function redigerSou(f) {
   const gen = f.kind === 'gen'; const SD = gen ? STEP_DOM_GEN : STEP_DOM;
@@ -2343,7 +2484,7 @@ function redigerSou(f) {
     const j = justify(f, el); const v = j.val || j.sugg; if (!v || v === 'NA') return;
     const k = domKey(el); const sc = scaleOf(f).find(x => x.k === v); sum += sc.v; cnt++;
     if (isBon(v)) { const g = el.rub || el.dom; (R[k].by = R[k].by || {})[g] = (R[k].by[g] || []).concat(`${lc(el.lib)} (${v})`); }
-    else { (poolOf(el) === 'env' ? (R[k].ameE = R[k].ameE || []) : R[k].ame).push(`${el.lib} (${sc.lib.toLowerCase()})` + (j.unmet.length ? ' : ' + j.unmet.map(lc).join(', ') : '') + '.'); (poolOf(el) === 'env' ? (R[k].recE = R[k].recE || []) : R[k].rec).push(el.rec); weak.push({ t: el.lib, v: sc.v, pool: poolOf(el) }); }
+    else { (poolOf(el) === 'env' ? (R[k].ameE = R[k].ameE || []) : R[k].ame).push(`${el.lib} (${sc.lib.toLowerCase()})` + (j.unmet.length ? ' : ' + j.unmet.map(lc).join(', ') : '') + '.'); (poolOf(el) === 'env' ? (R[k].recE = R[k].recE || []) : R[k].rec).push(conseilOf(f, el)); weak.push({ t: el.lib, v: sc.v, pool: poolOf(el) }); }
   });
   const pa = gen ? { ok: [], ko: [] } : planAnalyse(f);
   pa.ok.forEach(x => R.org.pos.push(x)); pa.ko.forEach(x => { R.org.ame.push(x.constat); R.org.rec.push(x.rec); });
@@ -2374,6 +2515,7 @@ function redigerSou(f) {
       `Activité « ${f.activite || '—'} » : `) + `${r} étape${r > 1 ? 's' : ''} réalisée${r > 1 ? 's' : ''} sur ${st.length} applicables. ` +
       (wk.length ? `Les efforts doivent porter sur : ${wk.join(', ')}. ` : '') + (gen ? `L’enseignant.e est invité.e à mettre en œuvre les recommandations formulées.` : `L’encadreur recommande l’application des suggestions formulées.`);
   } else f.redac.appreciation = '';
+  appliquerRetenue(f);
 }
 
 /* Analyse du plan de session (soutien) */
@@ -2544,6 +2686,7 @@ function dureeSection(f) {
   const dp = dureePrevue(f); const pv = prevueMin(f); const ecart = m !== null ? m - pv : null;
   const inner = `<p class="hint">Touchez « Début de la séance » quand l’enseignant(e) commence et « Fin de la séance » quand il/elle termine : la durée se calcule et s’inscrit dans le champ « Durée » du bulletin. Les heures restent modifiables.</p>
   <div class="row"><button class="btn primary" data-act="chrono-debut">Début de la séance (maintenant)</button><button class="btn primary" data-act="chrono-fin" ${t.debut ? '' : 'disabled'}>Fin de la séance (maintenant)</button>${t.debut || t.fin ? '<button class="btn" data-act="chrono-raz">Effacer les heures</button>' : ''}</div>
+  ${f.kind === 'gen' ? `<div class="rub">Moments didactiques (facultatif)</div><div class="row">${[['pres', 'Présentation'], ['dev', 'Développement'], ['eva', 'Évaluation']].map(([k, l]) => `<button class="btn sm" data-act="chrono-ph" data-v="${k}">${l}${(t.ph || {})[k] ? ' · ' + esc(hFr(t.ph[k])) : ''}</button>`).join('')}</div>${phasesTemps(f) ? `<p class="hint">Temps par moment : ${esc(phasesTemps(f))}.</p>` : '<p class="hint">Touchez chaque moment au moment où il commence ; « Fin de la séance » clôt l’évaluation.</p>'}` : ''}
   <div class="grid">
     <label class="f">Heure de début<input type="time" data-chrono="debut" value="${esc(t.debut || '')}"></label>
     <label class="f">Heure de fin<input type="time" data-chrono="fin" value="${esc(t.fin || '')}"></label>
@@ -2722,15 +2865,17 @@ function grillePart(f, pool) {
         ${r.def ? `<p class="hint">${esc(r.def)}</p>` : ''}
         <div class="indh">Indicateurs obligatoires (éliminatoires)</div>${r.obl.map((ind, i) => indRow(ind, indKey(j.refId, el, 'o' + i))).join('')}
         <div class="indh">Indicateurs complémentaires</div>${r.comp.map((ind, i) => indRow(ind, indKey(j.refId, el, 'c' + i))).join('')}
-        ${el.taux ? `<label class="f">Taux de réussite observé (%)<input data-k="eltaux" data-e="${el.id}" inputmode="numeric" value="${esc(d.taux ?? '')}" placeholder="Ex. 72"></label>` : ''}
+        ${el.taux ? `<div class="grid"><label class="f">Élèves ayant réussi<input data-k="eltauxr" data-e="${el.id}" inputmode="numeric" value="${esc(d.tauxR ?? '')}"></label><label class="f">Élèves évalués<input data-k="eltauxe" data-e="${el.id}" inputmode="numeric" value="${esc(d.tauxE ?? '')}"></label><label class="f">Taux de réussite (%)<input data-k="eltaux" data-e="${el.id}" inputmode="numeric" value="${esc(d.taux ?? '')}" placeholder="Ex. 72"></label></div><p class="hint">Le taux se calcule à partir des deux nombres (réussis ÷ évalués) ; on peut aussi le saisir directement. Repère : « Bien » au-delà de 75 %.</p>` : ''}
         <details class="degres"><summary>Degrés d’appréciation du guide</summary>${Object.entries(r.deg).map(([k, v]) => `<div><b>${k}</b> ${esc(v)}</div>`).join('')}</details>
         <textarea class="inp" data-k="elobs" data-e="${el.id}" placeholder="Observation sur cet élément">${esc(d.obs)}</textarea></div>` : ''}</div>`;
   });
   const mapping = f.kind === 'gen' ? '<div class="callout">Les rubriques « Pratiques enseignantes au CP » et « au CE et au CM » se mettent en non applicable d’office selon la classe ; la ligne propre à la lecture aussi. Vous pouvez les réintégrer.</div>' : '';
   const legend = `<div class="legend">${sc.map(s => `<span><b>${s.k}</b> ${s.lib}</span>`).join('')}<span>L’appréciation se coche automatiquement selon les indicateurs ; touchez une autre valeur pour la modifier (bordure orange = valeur automatique)</span></div>`;
+  const DEFV = { 4: 'Appliqué correctement, systématiquement et avec tous les élèves ; dépasse les attentes.', 3: 'Appliqué correctement ; répond pleinement aux attentes et aux objectifs fixés.', 2: 'Appliqué partiellement ; des améliorations importantes sont nécessaires.', 1: 'Appliqué de façon non conforme ; ne répond pas aux attentes.', 0: 'Pas appliqué alors que la séance l’exigeait.' };
+  const defs = pool === 'env' ? `<details class="degres"><summary>Définitions de l’échelle et calculs</summary><div class="tablewrap"><table class="t"><thead><tr><th>Code</th><th>Libellé</th><th>Constat observable</th><th>Valeur</th></tr></thead><tbody>${sc.map(x => `<tr><td><b>${x.k}</b></td><td>${esc(x.lib)}</td><td>${x.v === null ? 'Ne s’applique pas à la séance observée : n’entre pas dans les calculs.' : esc(DEFV[x.v] || '')}</td><td>${x.v === null ? 'exclu' : x.v}</td></tr>`).join('')}</tbody></table></div><p class="hint">Points forts : ${sc.filter(x => x.v !== null && x.v >= 3).map(x => x.k).join(' et ')} ; points à améliorer : ${sc.filter(x => x.v !== null && x.v < 3).map(x => x.k).join(', ')}. Indice de maîtrise = somme des valeurs ÷ (nombre d’éléments cotés × 4). Appréciation générale : note pondérée, 70 % pratiques enseignantes et maîtrise du contenu, 30 % environnement et auxiliaires pédagogiques.</p></details>` : '';
   const sp = scoreParts(f); const note = sp[pool] === null ? '' : ` · ${fmt1(sp[pool])}/4`;
   const poids = `<p class="hint"><b>Poids dans l’appréciation générale : ${pool === 'prat' ? '70 %' : '30 %'}.</b> ${pool === 'prat' ? 'Pratiques enseignantes, maîtrise du contenu enseigné et compréhension du contenu à enseigner, vérifiée à travers l’évaluation (préparation, animation, évaluation).' : 'Aspect de la classe, documents et auxiliaires pédagogiques, supports et matériel.'}</p>`;
-  return sec(pool === 'env' ? 'grille' : 'grille2', pool === 'env' ? 'Environnement et auxiliaires pédagogiques' : 'Pratiques enseignantes et maîtrise du contenu', `${filled}/${total} appréciés${note}`, (pool === 'env' ? '' : mapping) + poids + legend + html);
+  return sec(pool === 'env' ? 'grille' : 'grille2', pool === 'env' ? 'Environnement et auxiliaires pédagogiques' : 'Pratiques enseignantes et maîtrise du contenu', `${filled}/${total} appréciés${note}`, (pool === 'env' ? '' : mapping) + poids + legend + defs + html);
 }
 
 function redacSection(f) {
@@ -2760,9 +2905,7 @@ function render() {
     const miss = missingList(f);
     const missPanel = SHOWMISS && miss.length ? `<div class="sec missp"><div class="body" style="padding-top:14px"><h2 style="font-size:1rem">Informations obligatoires manquantes (${miss.length})</h2><p class="hint">Le bulletin Word sera produit quand tout sera renseigné. Un critère ou une étape qui ne s’applique pas à cette séance peut être exclu avec « Non applicable ».</p><ul class="misslist">${miss.map(m => `<li><button class="linkbtn" data-act="goto" data-t="${esc(m.t)}">${esc(m.l)}</button></li>`).join('')}</ul></div></div>` : (SHOWMISS && !miss.length ? '<div class="callout">Toutes les informations obligatoires sont renseignées : vous pouvez produire le bulletin Word.</div>' : '');
     if (S.preview[f.kind]) { v.innerHTML = (baseStatus(f) && baseStatus(f).etat !== 'identique' ? `<div class="sec"><div class="body" style="padding-top:12px">${baseBanner(f)}</div></div>` : '') + previewView(f); }
-    else v.innerHTML = missPanel + (f.kind === 'gen'
-      ? ensSection(f) + seanceSection(f) + dureeSection(f)
-      : ensSection(f) + souSeanceSection(f) + dureeSection(f) + planSection(f)) + stepsSection(f) + grilleSection(f) + redacSection(f) + signSection(f);
+    else v.innerHTML = missPanel + formSteps(f);
     dock.hidden = false;
     dock.innerHTML = `<div class="row"><span class="msg">${miss.length ? `${miss.length} information${miss.length > 1 ? 's' : ''} obligatoire${miss.length > 1 ? 's' : ''} à compléter` : 'Fiche complète'} · brouillon enregistré sur cet appareil</span>
       <button class="btn" data-act="new">Nouvelle<span class="lg"> fiche</span></button><button class="btn" data-act="save">Enregistrer<span class="lg"> la fiche</span></button>${S.preview[f.kind] ? '<button class="btn" data-act="pv-back">Retour<span class="lg"> à la saisie</span></button><button class="btn primary" data-act="word">Canevas Word</button><button class="btn primary" data-act="pdf">Canevas PDF</button><button class="btn brand" data-act="bilan-word">Bilan Word</button><button class="btn brand" data-act="bilan-pdf">Bilan PDF</button>' : '<button class="btn primary" data-act="genbull">Générer<span class="lg"> la</span> fiche</button>'}</div>`;
@@ -2819,7 +2962,10 @@ function fichesView() {
     return `<tr><td>${frDate(f.date)}</td><td>${f.kind === 'gen' ? 'Visite de classe – ' + discOf(f) : 'Soutien (mathématiques)'}</td><td>${esc(e.nom || '')} ${esc(e.prenoms || '')}</td><td>${esc(e.ecole || '')}</td><td>${esc(what)}</td>
       <td class="row"><button class="btn sm" data-act="f-open" data-id="${f.id}">Ouvrir</button><button class="btn sm" data-act="f-word" data-id="${f.id}">Word</button><button class="btn sm" data-act="f-pdf" data-id="${f.id}">PDF</button><button class="btn sm" data-act="f-bilan" data-id="${f.id}">Bilan PDF</button><button class="linkbtn" data-act="f-del" data-id="${f.id}">Supprimer</button></td></tr>`;
   }).join('');
-  return sec('fiches', 'Fiches enregistrées', `${S.fiches.length}`, `<div class="tablewrap"><table class="t"><thead><tr><th>Date</th><th>Grille</th><th>Enseignant</th><th>École</th><th>Séance / activité</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`);
+  const clos = S.fiches.filter(x => x.cloture && x.cloture.entretien && x.cloture.emarge && x.appRetenue).length;
+  const outils = `<p class="hint">${S.fiches.length} fiche${S.fiches.length > 1 ? 's' : ''} sur cet appareil · ${clos} clôturée${clos > 1 ? 's' : ''} · ${S.fiches.length - clos} en cours. Les fiches restent sur cet appareil : exportez régulièrement une sauvegarde.</p>
+    <div class="row"><button class="btn sm" data-act="f-csv">Exporter en CSV</button><button class="btn sm" data-act="backup">Sauvegarde (JSON)</button><label class="btn sm">Importer une sauvegarde<input type="file" accept=".json,application/json" id="json-imp" hidden></label></div>`;
+  return sec('fiches', 'Fiches enregistrées', `${S.fiches.length}`, outils + `<div class="tablewrap"><table class="t"><thead><tr><th>Date</th><th>Grille</th><th>Enseignant</th><th>École</th><th>Séance / activité</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`);
 }
 
 /* ========================= ÉVÉNEMENTS ========================= */
@@ -2877,6 +3023,8 @@ document.addEventListener('input', (ev) => {
   else if (k === 'gobs') { const st = stepsOf(f)[+t.dataset.s]; stepData(f, st).gobs = t.value; }
   else if (k === 'elobs') { const el = gridItems(f.kind, f).find(x => x.id === t.dataset.e); elData(f, el).obs = t.value; }
   else if (k === 'eltaux') { const el = gridItems(f.kind, f).find(x => x.id === t.dataset.e); elData(f, el).taux = t.value; }
+  else if (k === 'conseil') { f.conseils = f.conseils || {}; f.conseils[t.dataset.e] = t.value; }
+  else if (k === 'eltauxr' || k === 'eltauxe') { const el = gridItems(f.kind, f).find(x => x.id === t.dataset.e); const d = elData(f, el); d[k === 'eltauxr' ? 'tauxR' : 'tauxE'] = t.value; const r = parseFloat(d.tauxR), e = parseFloat(d.tauxE); if (r >= 0 && e > 0 && r <= e) d.taux = String(Math.round(100 * r / e)); }
   else if (t.tagName !== 'SELECT') {
     setPath(f, k, t.value);
     if (k === 'numero') f.numAuto = t.value.trim() ? false : true;
@@ -2898,7 +3046,7 @@ document.addEventListener('change', (ev) => {
   if (t.id === 'csv-ses') return importCsvSes(t.files[0]);
   if (t.id === 'csv-iepp') return importCsvIepp(t.files[0]);
   if (t.id === 'json-imp') return importJson(t.files[0]);
-  if (t.dataset && t.dataset.k === 'eltaux') { persistDraft(); setTimeout(() => keepScroll(render), 200); return; }
+  if (t.dataset && /^eltaux[re]?$/.test(t.dataset.k)) { persistDraft(); setTimeout(() => keepScroll(render), 200); return; }
   if (t.dataset && t.dataset.edt) { S.cfg.edt = S.cfg.edt || {}; const v = t.value.replace(/[^0-9]/g, ''); if (v) S.cfg.edt[t.dataset.edt] = v; else delete S.cfg.edt[t.dataset.edt]; LS.set('gv_cfg', S.cfg); toast('Durée prévue enregistrée.'); return; }
   if (t.dataset && t.dataset.chrono) { const f = cur(); f.chrono = f.chrono || {}; f.chrono[t.dataset.chrono] = t.value; appliquerDuree(f); persistDraft(); keepScroll(render); return; }
   if (t.dataset && t.dataset.bp) { if (t.dataset.bp === 'niv') S.progNiv = t.value; else S.progDisc = t.value; keepScroll(render); return; }
@@ -2929,7 +3077,7 @@ document.addEventListener('click', (ev) => {
     case 'calc': { const nat = DEMARCHES[f.seance.nature] ? f.seance.nature : 'acquisition'; f.calc = f.calc || {}; f.calc[nat] = b.dataset.v; break; }
     case 'stat': { const st = steps[+b.dataset.s]; const d = stepData(f, st); d.statut = b.dataset.v || null; break; }
     case 'na': { const el = gridItems(f.kind, f).find(x => x.id === b.dataset.e); const d = elData(f, el); d.na = naEff(f, el) ? false : true; break; }
-    case 'goto': { const t = document.querySelector(b.dataset.t); if (t) { const det = t.closest('details.sec'); if (det && !det.open) { det.open = true; S.open[det.dataset.sec] = true; } t.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (t.focus) t.focus({ preventScroll: true }); } return; }
+    case 'goto': { if (!document.querySelector(b.dataset.t) && etapeDe(f) !== 'all') { S.etape[f.kind] = etapeDeCible(f, b.dataset.t); render(); } const t = document.querySelector(b.dataset.t); if (t) { const det = t.closest('details.sec'); if (det && !det.open) { det.open = true; S.open[det.dataset.sec] = true; } t.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (t.focus) t.focus({ preventScroll: true }); } return; }
     case 'val': { const el = gridItems(f.kind, f).find(x => x.id === b.dataset.e); const d = elData(f, el); if (b.dataset.v === 'NA') { d.na = naEff(f, el) ? false : true; break; } if (naEff(f, el)) d.na = false; const j = justify(f, el); d.val = (d.val === b.dataset.v || (!d.val && j.sugg === b.dataset.v)) ? null : b.dataset.v; break; }
     case 'valauto': { const el = gridItems(f.kind, f).find(x => x.id === b.dataset.e); elData(f, el).val = null; break; }
     case 'ind': { const el = gridItems(f.kind, f).find(x => x.id === b.dataset.e); const d = elData(f, el); const v = b.dataset.v === '1'; const i = b.dataset.i; d.ind[i] = d.ind[i] === v ? undefined : v; break; }
@@ -2948,6 +3096,11 @@ document.addEventListener('click', (ev) => {
       S.sou = JSON.parse(JSON.stringify(x)); S.tab = 'sou'; S.preview.sou = false; persistDraft(); render(); window.scrollTo(0, 0); toast('Fiche de soutien aux apprentissages ouverte, reliée à ce renforcement.'); return;
     }
     case 'disc': { f.seance.discipline = b.dataset.v; const ok = typesPour(f).map(x => x[0]); if (!ok.includes(f.seance.nature)) f.seance.nature = ok[0] || 'acquisition'; if (isFr(f)) { f.seance.mode = 'manuel'; f.seance.seanceId = ''; } break; }
+    case 'etape': { S.etape = S.etape || {}; S.etape[f.kind] = b.dataset.v === 'all' ? 'all' : +b.dataset.v; render(); const st = document.querySelector('.stepper'); if (st) st.scrollIntoView({ block: 'start' }); return; }
+    case 'app-ret': f.appRetenue = f.appRetenue === b.dataset.v ? '' : b.dataset.v; appliquerRetenue(f); break;
+    case 'clot': f.cloture = f.cloture || {}; f.cloture[b.dataset.v] = !f.cloture[b.dataset.v]; break;
+    case 'conseils-guide': f.conseils = f.conseils || {}; defaillances(f).forEach(({ el }) => { if (!(f.conseils[el.id] || '').trim()) f.conseils[el.id] = el.rec; }); break;
+    case 'chrono-ph': { const t = f.chrono = { ...(f.chrono || {}) }; t.ph = { ...(t.ph || {}) }; const h = hhmm(new Date()); t.ph[b.dataset.v] = h; if (!t.debut) t.debut = h; toast(({ pres: 'Présentation', dev: 'Développement', eva: 'Évaluation' })[b.dataset.v] + ' : début relevé à ' + hFr(h) + '.'); break; }
     case 'chrono-debut': f.chrono = { ...(f.chrono || {}), debut: hhmm(new Date()), fin: '' }; toast('Début de la séance relevé à ' + hFr(f.chrono.debut) + '.'); break;
     case 'chrono-fin': f.chrono = { ...(f.chrono || {}), fin: hhmm(new Date()) }; if (appliquerDuree(f)) toast(f.chrono.minutes > 240 ? `Durée de ${f.chrono.minutes} min : vérifiez les heures de début et de fin.` : `Durée de la séance : ${f.chrono.minutes} min, inscrite au bulletin.`); break;
     case 'chrono-raz': f.chrono = { prevue: (f.chrono || {}).prevue }; break;
@@ -3000,6 +3153,11 @@ document.addEventListener('click', (ev) => {
     case 'cfg-save': S.cfg = { ...S.cfg, serveur: $('#cfg-serveur').value.trim(), sigle: $('#cfg-sigle').value.trim(), secteur: $('#cfg-secteur').value.trim(), conseiller: $('#cfg-cons').value, lieu: $('#cfg-lieu').value, chef: $('#cfg-chef').value, drena: $('#cfg-drena').value, iepp: $('#cfg-iepp').value }; LS.set('gv_cfg', S.cfg); PL.sess = null; PL.data = null; plInitDb(); toast('Réglages enregistrés.'); return;
     case 'srv-test': { const u = $('#cfg-serveur').value.trim(); if (!u) { toast('Collez l’adresse du serveur.'); return; } serverDb(u).ping().then(() => toast('Serveur joignable : la plateforme est prête.')).catch(e => toast('Serveur injoignable : ' + (e.message || e.code))); return; }
     case 'srv-export': { if (!S.cfg.serveur) { toast('Enregistrez d’abord l’adresse du serveur.'); return; } saveFile('Configuration_plateforme_DPFC.json', new Blob([JSON.stringify({ v: 1, cfg: { serveur: S.cfg.serveur } }, null, 1)], { type: 'application/json' })); return; }
+    case 'f-csv': { const q = (x) => '"' + String(x ?? '').replace(/"/g, '""').replace(/\s+/g, ' ').trim() + '"';
+      const H = ['Date', 'Bulletin', 'Discipline', 'Enseignant', 'Matricule', 'École', 'Classe', 'Séance ou activité', 'Éléments cotés', 'Note pondérée /4', 'Pratiques /4 (70 %)', 'Environnement /4 (30 %)', 'Appréciation indicative', 'Appréciation retenue', 'Clôturée'];
+      const L = S.fiches.map(x => { const e = x.ens || {}; const sp = scoreParts(x); const c = comptage(x); const clo = !!(x.cloture && x.cloture.entretien && x.cloture.emarge && x.appRetenue);
+        return [frDate(x.date), x.kind === 'gen' ? 'Visite de classe' : 'Soutien aux apprentissages', x.kind === 'gen' ? discOf(x) : 'Mathématiques', [e.nom, e.prenoms].filter(Boolean).join(' '), e.matricule, e.ecole, e.classe, x.kind === 'gen' ? (x.seance.titre || '') : (x.activite || ''), `${c.cot}/${c.tot}`, sp.n ? fmt1(sp.w) : '', sp.prat === null ? '' : fmt1(sp.prat), sp.env === null ? '' : fmt1(sp.env), sp.n ? RET_COURT[codeNote(sp.w)] : '', x.appRetenue ? RET_COURT[x.appRetenue] : '', clo ? 'oui' : 'non'].map(q).join(';'); });
+      saveFile('fiches_visites_' + today().split('-').reverse().join('-') + '.csv', new Blob(['\ufeff' + [H.map(q).join(';')].concat(L).join('\n')], { type: 'text/csv' })); return; }
     case 'backup': saveFile('sauvegarde_grilles_maths_' + today().split('-').reverse().join('-') + '.json', new Blob([JSON.stringify({ v: 1, ens: S.ens, fiches: S.fiches, custom: S.custom, ieppCustom: S.ieppCustom, cfg: S.cfg }, null, 1)], { type: 'application/json' })); return;
     default: return;
   }
@@ -3412,7 +3570,7 @@ function bilanCrit(f, el) {
   const d = elData(f, el); const ok = isBon(v);
   const obs = d.obs ? ` Observation : ${d.obs}` : '';
   if (ok) return { pos: `${el.lib} (${v})` + (j.met.length ? ' : ' + j.met.slice(0, 3).map(lc).join(' ; ') + '.' : '.') + obs };
-  return { ame: `${el.lib} (${v})` + (j.unmet.length ? ' : ' + j.unmet.map(lc).join(' ; ') + '.' : '.') + obs + ` → ${el.rec}` };
+  return { ame: `${el.lib} (${v})` + (j.unmet.length ? ' : ' + j.unmet.map(lc).join(' ; ') + '.' : '.') + obs + ` → ${conseilOf(f, el)}` };
 }
 function bilanStep(f, st, num) {
   const a = stepAuto(f, st); const d = stepData(f, st);
@@ -3445,13 +3603,15 @@ function bilanSections(f) {
 }
 function bilanRecs(f) {
   const out = [];
-  gridItems(f.kind, f).forEach(el => { const j = justify(f, el); const v = j.val || j.sugg; if (v && !isBon(v) && v !== 'NA') out.push({ v: (scaleOf(f).find(x => x.k === v) || {}).v || 0, t: el.rec }); });
-  return [...new Set(out.sort((a, b) => a.v - b.v).map(x => x.t))].slice(0, 6);
+  gridItems(f.kind, f).forEach(el => { const j = justify(f, el); const v = j.val || j.sugg; if (v && !isBon(v) && v !== 'NA') out.push({ v: (scaleOf(f).find(x => x.k === v) || {}).v || 0, t: conseilOf(f, el), perso: !!((f.conseils || {})[el.id] || '').trim() }); });
+  const P = out.filter(x => x.perso).map(x => x.t); const G = out.filter(x => !x.perso).sort((a, b) => a.v - b.v).map(x => x.t);
+  return [...new Set(P.concat(G))].slice(0, Math.max(6, P.length));
 }
 /* Bilan de la maîtrise des pratiques enseignantes (texte commun aux formats) */
 function pratiquesTexte(f) {
   const X = pratiquesVisite(f); const sp = X.sp; const out = [];
-  if (sp.n) out.push(`Appréciation pondérée : ${fmt1(sp.w)}/4 (${labNote(sp.w)}) – ${POOL_LIB.prat.toLowerCase()} : ${fmt1(sp.prat)}/4, poids 70 % ; ${POOL_LIB.env.toLowerCase()} : ${fmt1(sp.env)}/4, poids 30 %.`);
+  if (sp.n) out.push(`Appréciation pondérée : ${fmt1(sp.w)}/4 (indicatif : ${labNote(sp.w)}${f.appRetenue ? ' ; appréciation retenue par l’encadreur : ' + RET_LIB[f.appRetenue] : ''}) – ${POOL_LIB.prat.toLowerCase()} : ${fmt1(sp.prat)}/4, poids 70 % ; ${POOL_LIB.env.toLowerCase()} : ${fmt1(sp.env)}/4, poids 30 %.`);
+  { const pt = phasesTemps(f); if (pt) out.push(`Temps par moment didactique : ${pt}.`); }
   if (X.taux !== null) out.push(`Actions attendues réalisées : ${Math.round(X.taux)} % en moyenne sur ${X.etapes.length} étape${X.etapes.length > 1 ? 's' : ''} du déroulé.`);
   if (X.maitrise.length) out.push(`Pratiques maîtrisées (75 % et plus) : ${X.maitrise.map(e => e.label).join(' ; ')}.`);
   if (X.aRenforcer.length) out.push(`Pratiques à renforcer (moins de 50 %) : ${X.aRenforcer.map(e => e.label).join(' ; ')}.`);
