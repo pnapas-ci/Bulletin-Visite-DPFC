@@ -1055,7 +1055,10 @@ const REF = (id) => (typeof GUIDE_REF !== 'undefined' && GUIDE_REF[id]) || CUSTO
    ref : fiche du guide du bulletin de visite. autoNA(f) : critère non applicable d'office (réintégrable). */
 // Activité de soutien menée pendant le renforcement : pas de plan de session
 const isRenf = (f) => !!f && f.kind === 'sou' && (f.contexte === 'renforcement' || (f.contexte === undefined && !!f.lienRenforcement));
-const isCP = (f) => /^CP/i.test((f.seance && f.seance.niveau) || (f.ens && f.ens.classe) || '');
+const isCP = (f) => /^CP/i.test(String((f.ens && f.ens.classe) || (f.seance && f.seance.niveau) || '').trim());
+// Pratiques propres à un cycle : au CP, celles du CE-CM sont grisées ; au CE et au CM, celles du CP sont grisées
+const CYCLE_IDS = ['cpManip', 'cpSchema', 'cpQuest', 'ceManip', 'ceSchema', 'ceQuest'];
+const cycleGris = (f, el) => CYCLE_IDS.includes(el.id) && (el.id.startsWith('cp') ? !isCP(f) : isCP(f));
 const GRILLE_GEN = [
   { dom: 'ORGANISATION', sous: [
     { rub: 'Aspect de la classe', items: [
@@ -2153,7 +2156,9 @@ function clotureSection(f) {
 }
 // Applique l'appréciation retenue au texte de l'appréciation générale
 function appliquerRetenue(f) {
-  const a = f.redac && f.redac.appreciation; if (!a || !f.appRetenue) return;
+  const a = f.redac && f.redac.appreciation; if (!f.redac) return;
+  if (!a || a === f.redac.appAuto) { f.redac.appreciation = appreciationTexte(f); f.redac.appAuto = f.redac.appreciation; return; }
+  if (!f.appRetenue) return;
   f.redac.appreciation = a.replace(/^(Prestation|Mise en œuvre) (très satisfaisante|satisfaisante|peu satisfaisante|insuffisante)/, (m, p) => `${p} ${RET_LIB[f.appRetenue]}`);
 }
 
@@ -2174,6 +2179,112 @@ function etapeDeCible(f, selector) {
   const probe = document.createElement('div');
   for (const k of [1, 2, 3, 4]) { const keep = S.etape[f.kind]; S.etape[f.kind] = k; probe.innerHTML = formSteps(f); S.etape[f.kind] = keep; if (probe.querySelector(selector)) return k; }
   return 'all';
+}
+/* ========================= RÉDACTION CENTRÉE SUR LES PRATIQUES ENSEIGNANTES =========================
+   Synthèse par rubrique du canevas (aspects positifs, aspects à améliorer, recommandations) :
+   d'abord les pratiques enseignantes clés (manipulation, schématisation, questionnement — ou leurs équivalents
+   en lecture), puis les points importants du bilan (étapes du déroulé, préparation, évaluation).
+   Appréciation générale : sans chiffres, une appréciation de la prestation et des encouragements. */
+const PRAT_CLES = [
+  { k: 'manip', ids: ['cpManip', 'ceManip'], nom: 'la manipulation', re: /manipul/i,
+    fort: 'fait manipuler le matériel par chaque apprenant(e)', effort: 'la manipulation du matériel par chaque apprenant(e) avant les échanges en groupe',
+    rec: 'Prévoir le matériel en quantité suffisante et laisser chaque apprenant(e) manipuler seul(e) avant d’échanger en petit groupe.' },
+  { k: 'schema', ids: ['cpSchema', 'ceSchema'], nom: 'la schématisation', re: /schémat|représent/i,
+    fort: 'fait schématiser le résultat de la manipulation', effort: 'la schématisation, sur l’ardoise, du résultat de la manipulation avant le calcul',
+    rec: 'Faire représenter sur l’ardoise le résultat de la manipulation avant tout calcul, puis faire verbaliser quelques schématisations.' },
+  { k: 'quest', ids: ['cpQuest', 'ceQuest'], nom: 'le questionnement', re: /question|pourquoi|comment |justifi/i,
+    fort: 'conduit un questionnement qui amène les apprenant(e)s à expliquer et à justifier leurs réponses', effort: 'le questionnement (« Comment as-tu fait ? », « Comment sais-tu que ta réponse est juste ? »)',
+    rec: 'Poser systématiquement « Comment as-tu fait ? » et « Comment sais-tu que ta réponse est juste ? », et faire échanger les apprenant(e)s entre eux.' }
+];
+// Équivalents en lecture (français, mêmes lignes du canevas)
+const PRAT_FR = {
+  cpManip: { nom: 'la lecture individuelle à voix haute', fort: 'fait lire chaque apprenant(e) à voix haute dans son propre livre', effort: 'la lecture individuelle à voix haute dans son propre livre' },
+  cpSchema: { nom: 'la correction individuelle (feed-back correctif)', fort: 'corrige individuellement les erreurs par le feed-back correctif', effort: 'la correction individuelle des erreurs (feed-back correctif)' },
+  cpQuest: { nom: 'l’explication des mots nouveaux et la compréhension', fort: 'explique les mots nouveaux et vérifie la compréhension', effort: 'l’explication des mots nouveaux et les questions de compréhension' },
+  ceManip: { nom: 'la lecture à voix haute et le feed-back correctif', fort: 'fait lire à voix haute dans le livre et corrige par le feed-back correctif', effort: 'la lecture individuelle à voix haute et le feed-back correctif' },
+  ceSchema: { nom: 'la lecture silencieuse', fort: 'fait lire silencieusement chaque apprenant(e) dans son propre livre', effort: 'la lecture silencieuse dans son propre livre' },
+  ceQuest: { nom: 'le retour sur le texte', fort: 'conduit le retour sur le texte (mots nouveaux, résumé, compréhension)', effort: 'le retour sur le texte (compréhension)' }
+};
+const joinEt = (a) => a.length < 2 ? (a[0] || '') : a.slice(0, -1).join(', ') + ' et ' + a[a.length - 1];
+const majus = (t) => t ? t.charAt(0).toUpperCase() + t.slice(1) : t;
+// Analyse des trois pratiques clés : critère de la grille + actions du déroulé qui s'y rapportent
+function pratiquesCles(f) {
+  if (f.kind !== 'gen') return [];
+  const fr = typeof isFr === 'function' && isFr(f); const items = gridItems('gen', f);
+  return PRAT_CLES.map(P => {
+    const el = items.find(x => P.ids.includes(x.id) && !naEff(f, x)); if (!el) return null;
+    const j = justify(f, el); const v = j.val || j.sugg || '';
+    const faits = [], nonFaits = [];
+    if (!fr) stepsOf(f).forEach(st => { if (st.pre) return; const a = stepAuto(f, st); if (a.statut === 'NA') return; const d = stepData(f, st);
+      st.points.forEach((p, i) => { if (!(P.k === 'quest' ? /^Pose la question/.test(p.x) || P.re.test(p.x) : P.re.test(p.x))) return; if (pointOff(f, st, p)) return;
+        if (d.pts[i] === true) faits.push(p.x); else if (d.pts[i] === false) nonFaits.push({ x: p.x, st: st.nom, obs: d.obs[i] }); }); });
+    const T = fr && PRAT_FR[el.id] ? PRAT_FR[el.id] : P;
+    return { P, el, v, bon: v ? isBon(v) : (faits.length && !nonFaits.length), cote: !!v || faits.length || nonFaits.length, j, faits, nonFaits, nom: T.nom,
+      fort: T.fort, effort: T.effort, rec: ((f.conseils || {})[el.id] || '').trim() || (fr ? el.rec : P.rec) };
+  }).filter(Boolean);
+}
+function redigerCanevas(f) {
+  const PC = pratiquesCles(f); const idsCles = PC.map(x => x.el.id);
+  const R = { org: { pos: [], ame: [], rec: [] }, ani: { pos: [], ame: [], rec: [] }, eva: { pos: [], ame: [], rec: [] } };
+  // 1. Pratiques enseignantes clés (rubrique Animation)
+  PC.filter(x => x.cote).forEach(x => {
+    if (x.bon) R.ani.pos.push(`${majus(x.nom)}${x.v ? ' (' + x.v + ')' : ''} : l’enseignant(e) ${x.fort}.`);
+    else {
+      const manque = x.nonFaits.slice(0, 2).map(n => `« ${n.x} » non fait (${n.st})`).concat(x.j.unmet.slice(0, 2).map(lc));
+      R.ani.ame.push(`${majus(x.nom)}${x.v ? ' (' + x.v + ')' : ''}${manque.length ? ' : ' + manque.join(' ; ') : ''}.`);
+      R.ani.rec.push(x.rec);
+    }
+  });
+  // 2. Autres critères de la grille (70 % pratiques et contenu, 30 % environnement)
+  const autres = { org: { pos: [], ame: [] }, ani: { pos: [], ame: [] }, eva: { pos: [], ame: [] } };
+  gridItems('gen', f).forEach(el => {
+    if (idsCles.includes(el.id)) return; const j = justify(f, el); const v = j.val || j.sugg; if (!v || v === 'NA' || j.na) return;
+    const sc = scaleOf(f).find(x => x.k === v); if (!sc || sc.v === null) return; const k = domKey(el); const perso = !!((f.conseils || {})[el.id] || '').trim();
+    (isBon(v) ? autres[k].pos : autres[k].ame).push({ v: sc.v, t: `${el.lib} (${v})`, rec: conseilOf(f, el), perso, pool: poolOf(el) });
+  });
+  // 3. Points importants du bilan : étapes du déroulé
+  const SD = STEP_DOM_GEN; const etapes = { org: { R: [], P: [] }, ani: { R: [], P: [] }, eva: { R: [], P: [] } };
+  stepsOf(f).forEach(st => { if (st.pre) return; const a = stepAuto(f, st); if (!a.statut || a.statut === 'NA') return; const k = st.dom || SD[st.id] || 'ani'; (a.statut === 'R' ? etapes[k].R : etapes[k].P).push(st.nom.replace(/^Calculine : /, 'calculine : ')); });
+  const N = 4;
+  ['org', 'ani', 'eva'].forEach(k => {
+    const r = R[k]; const A = autres[k];
+    if (etapes[k].R.length) r.pos.push(`Étapes bien conduites : ${etapes[k].R.slice(0, 4).join(' ; ')}.`);
+    pick70(A.pos.sort((a, b) => b.v - a.v), N).forEach(x => r.pos.push(x.t));
+    if (etapes[k].P.length) r.ame.push(`Étapes partiellement ou non réalisées : ${etapes[k].P.slice(0, 4).join(' ; ')}.`);
+    const ame = pick70(A.ame.sort((a, b) => (b.perso - a.perso) || (a.v - b.v)), N);
+    ame.forEach(x => r.ame.push(x.t));
+    ame.filter(x => x.perso).concat(ame).forEach(x => r.rec.push(x.rec));
+    const fmt = (a, vide) => { const u = [...new Set(a)]; return u.length ? u.slice(0, N).map(x => '- ' + x).join('\n') : '- ' + vide; };
+    f.redac[k] = { pos: fmt(r.pos, 'Néant.'), ame: fmt(r.ame, 'Néant.'), rec: fmt(r.rec, r.ame.length ? 'Voir les conseils du bilan de la visite.' : 'Maintenir ces bonnes pratiques.') };
+  });
+  f.redac.appreciation = appreciationTexte(f); f.redac.appAuto = f.redac.appreciation;
+}
+// Appréciation générale : sans chiffres
+function appreciationTexte(f) {
+  const sp = scoreParts(f); if (!sp.n) return '';
+  const code = f.appRetenue || codeNote(sp.w); const lab = RET_LIB[code];
+  const PC = pratiquesCles(f).filter(x => x.cote);
+  const forts = PC.filter(x => x.bon).map(x => x.fort);
+  const efforts = PC.filter(x => !x.bon).map(x => x.effort);
+  const autresFaibles = gridItems(f.kind, f).filter(el => !PC.some(x => x.el.id === el.id)).map(el => { const j = justify(f, el); const v = j.val || j.sugg; return { el, v, sc: (scaleOf(f).find(x => x.k === v) || {}).v }; })
+    .filter(x => x.v && x.v !== 'NA' && !isBon(x.v)).sort((a, b) => (poolOf(a.el) === 'env') - (poolOf(b.el) === 'env') || a.sc - b.sc).slice(0, efforts.length ? 1 : 2).map(x => lc(x.el.lib));
+  const bonsOrg = gridItems(f.kind, f).filter(el => domKey(el) === 'org' && poolOf(el) === 'prat').every(el => { const v = justify(f, el).val || justify(f, el).sugg; return !v || v === 'NA' || isBon(v); });
+  const qui = f.kind === 'gen' ? 'la prestation' : 'la conduite du soutien aux apprentissages';
+  const phrases = [];
+  phrases.push(f.kind === 'gen' ? `Prestation ${lab}.` : `Mise en œuvre ${lab} du soutien aux apprentissages.`);
+  const pos = []; if (bonsOrg) pos.push('la séance est bien préparée'); if (forts.length) pos.push('l’enseignant(e) ' + joinEt(forts));
+  if (pos.length) phrases.push(majus(pos.join(' ; ')) + '.');
+  else if (code === 'TS' || code === 'S') phrases.push('La démarche est respectée dans l’ensemble et les apprenant(e)s sont actifs.');
+  const eff = efforts.concat(autresFaibles);
+  if (eff.length) phrases.push(`Pour améliorer ${qui}, les efforts doivent porter sur les points suivants : ${eff.join(' ; ')}.`);
+  const ENC = {
+    TS: 'Félicitations pour ce travail de qualité : continuez ainsi et partagez vos bonnes pratiques avec vos collègues.',
+    S: 'Bon travail : poursuivez vos efforts en appliquant les conseils donnés, vous êtes sur la bonne voie.',
+    PS: 'Courage : en appliquant les conseils donnés, des progrès nets seront visibles dès la prochaine visite. L’encadrement reste à votre disposition.',
+    INS: 'Nous vous encourageons vivement à appliquer les conseils donnés ; un accompagnement de proximité vous aidera à progresser rapidement.'
+  };
+  phrases.push(ENC[code]);
+  return phrases.join(' ').replace(/\d+([,.]\d+)?\s*\/\s*\d+|\d+\s*%/g, '').replace(/\s{2,}/g, ' ').trim();
 }
 /* ========================= ÉCRAN D'ACCUEIL ========================= */
 const SITE_DPFC = 'https://pnapas-ci.github.io/Bulletin-Visite-DPFC/';
@@ -2236,8 +2347,8 @@ window.addEventListener('appinstalled', () => { window.__dpfcInstall = null; if 
    L'application compare sa version à celle publiée sur le site (version.json).
    En ligne : la nouvelle version s'installe seule (à l'ouverture) ou d'un toucher ; les nouveautés s'affichent une fois.
    Fichier hors ligne : un bandeau propose de télécharger la nouvelle version. */
-const APP_VERSION = '2026.11.21.2';
-const APP_HISTO = [{"version": "2026.11.21.2", "date": "2026-11-21", "notes": ["Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.", "Après chaque mise à jour, les nouveautés s’affichent une fois.", "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."]}, {"version": "2026.11.21.1", "date": "2026-11-21", "notes": ["Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.", "Page d’installation avec codes QR.", "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."]}, {"version": "2026.11.20.1", "date": "2026-11-20", "notes": ["Application installable sur smartphone et ordinateur ; utilisation hors ligne.", "Version d’essai avec identifiant d’appareil et code d’activation (jusqu’au 31 août 2027)."]}];
+const APP_VERSION = '2026.11.22.1';
+const APP_HISTO = [{"version": "2026.11.22.1", "date": "2026-11-22", "notes": ["Bulletin : selon la classe visitée, les pratiques enseignantes de l’autre cycle sont grisées (au CP, celles du CE-CM ; au CE et au CM, celles du CP).", "Aspects positifs, aspects à améliorer et recommandations du canevas : rédigés d’abord sur les pratiques enseignantes (manipulation, schématisation, questionnement), puis sur les points importants du bilan.", "Appréciation générale sans chiffres : appréciation de la prestation et encouragements."]}, {"version": "2026.11.21.2", "date": "2026-11-21", "notes": ["Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.", "Après chaque mise à jour, les nouveautés s’affichent une fois.", "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."]}, {"version": "2026.11.21.1", "date": "2026-11-21", "notes": ["Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.", "Page d’installation avec codes QR.", "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."]}, {"version": "2026.11.20.1", "date": "2026-11-20", "notes": ["Application installable sur smartphone et ordinateur ; utilisation hors ligne.", "Version d’essai avec identifiant d’appareil et code d’activation (jusqu’au 31 août 2027)."]}];
 const MAJ_BASE = () => location.protocol === 'file:' ? SITE_DPFC : './';
 const MAJ = { info: null, t0: Date.now(), last: 0 };
 const vNum = (v) => String(v || '').split('.').map(x => String(+x || 0).padStart(4, '0')).join('.');
@@ -2598,30 +2709,7 @@ const DOM_KEY = { 'ORGANISATION': 'org', 'ANIMATION': 'ani', 'ÉVALUATION': 'eva
 const STEP_DOM = { plan: 'org', miseenplace: 'org', correction: 'eva', progression: 'eva' };
 const STEP_DOM_GEN = { materiel: 'org', capable: 'eva', corcol: 'eva', corind: 'eva', correction: 'eva', suivi: 'eva', synthese: 'eva', exploitation: 'eva', exercices: 'eva', compr: 'eva', cr: 'eva' };
 /* Canevas (2 pages) : synthèse courte ; le détail va dans le bilan de la visite */
-function redigerGen(f) {
-  const R = { org: { pos: [], ame: [] }, ani: { pos: [], ame: [] }, eva: { pos: [], ame: [] } };
-  let sum = 0, cnt = 0; const weak = [];
-  gridItems('gen', f).forEach(el => {
-    const j = justify(f, el); const v = j.val || j.sugg; if (!v || v === 'NA') return;
-    const k = domKey(el); const sc = scaleOf(f).find(x => x.k === v); sum += sc.v; cnt++;
-    if (isBon(v)) R[k].pos.push({ v: sc.v, t: `${el.lib} (${v})`, pool: poolOf(el) });
-    else { R[k].ame.push({ v: sc.v, t: `${el.lib} (${v})`, rec: conseilOf(f, el), perso: !!((f.conseils || {})[el.id] || '').trim(), pool: poolOf(el) }); weak.push({ t: el.lib, v: sc.v, pool: poolOf(el) }); }
-  });
-  const N = 3;
-  ['org', 'ani', 'eva'].forEach(k => {
-    const pos = pick70(R[k].pos.sort((a, b) => b.v - a.v), N), ame = pick70(R[k].ame.sort((a, b) => a.v - b.v), N);
-    const lst = (a, more) => a.length ? a.slice(0, N).map(x => '- ' + x.t).join('\n') + (a.length > N ? `\n- … et ${a.length - N} autre${a.length - N > 1 ? 's' : ''} ${a.length - N > 1 ? more : more.replace('éléments', 'élément').replace('satisfaisants', 'satisfaisant')}` : '') : '- Néant.';
-    f.redac[k] = { pos: lst(pos, 'éléments satisfaisants (voir bilan).'), ame: lst(ame, 'éléments à améliorer (voir bilan).'),
-      // les conseils rédigés par l'encadreur passent en premier, puis les recommandations du guide
-      rec: ame.length ? [...new Set(ame.filter(x => x.perso).map(x => x.rec).concat(ame.slice(0, 3).map(x => x.rec)))].map(x => '- ' + x).join('\n') : '- Maintenir ces bonnes pratiques.' };
-  });
-  if (cnt) {
-    const sp = scoreParts(f); const wk = pick70(weak.sort((a, b) => a.v - b.v), 4).slice(0, 4).map(x => x.t);
-    f.redac.appreciation = `Prestation ${labNote(sp.w)} (${noteLigne(sp)}). ` +
-      (wk.length ? `Les efforts doivent porter sur : ${wk.map(lc).join(', ')}.` : 'Poursuivre dans cette dynamique.');
-  } else f.redac.appreciation = '';
-  appliquerRetenue(f);
-}
+function redigerGen(f) { redigerCanevas(f); }
 function redigerSou(f) {
   const gen = f.kind === 'gen'; const SD = gen ? STEP_DOM_GEN : STEP_DOM;
   const R = { org: { pos: [], ame: [], rec: [] }, ani: { pos: [], ame: [], rec: [] }, eva: { pos: [], ame: [], rec: [] } };
@@ -2655,11 +2743,7 @@ function redigerSou(f) {
     const sp = scoreParts(f); const lab = labNote(sp.w); const wk = pick70(weak.sort((a, b) => a.v - b.v), 4).slice(0, 4).map(x => x.t);
     const st = stepsOf(f).map(s => stepAuto(f, s)).filter(a => a.statut && a.statut !== 'NA');
     const r = st.filter(a => a.statut === 'R').length;
-    f.redac.appreciation = (gen ? `Prestation ${lab} (${noteLigne(sp)}). ` +
-      `Séance « ${TYPES_SEANCE[f.seance.nature] || '—'} »${f.seance.titre ? ' (' + f.seance.titre + ')' : ''} : ` :
-      `Mise en œuvre ${lab} du soutien aux apprentissages (${noteLigne(sp)}). ` +
-      `Activité « ${f.activite || '—'} » : `) + `${r} étape${r > 1 ? 's' : ''} réalisée${r > 1 ? 's' : ''} sur ${st.length} applicables. ` +
-      (wk.length ? `Les efforts doivent porter sur : ${wk.join(', ')}. ` : '') + (gen ? `L’enseignant.e est invité.e à mettre en œuvre les recommandations formulées.` : `L’encadreur recommande l’application des suggestions formulées.`);
+    f.redac.appreciation = appreciationTexte(f); f.redac.appAuto = f.redac.appreciation;
   } else f.redac.appreciation = '';
   appliquerRetenue(f);
 }
@@ -3463,7 +3547,8 @@ function bulletinGen(f) {
     if (el.dom !== lastDom) { grid += `<tr class="pv-sub"><td colspan="8">${pv(el.dom)}</td></tr>`; lastDom = el.dom; }
     const first = k === 0 || its[k - 1].rub !== el.rub || its[k - 1].dom !== el.dom; const span = first ? its.slice(k).findIndex((x, n) => n > 0 && (x.rub !== el.rub || x.dom !== el.dom)) : 0;
     const j = justify(f, el);
-    grid += `<tr>${first ? `<td rowspan="${span < 0 ? its.length - k : span}" class="pv-rub">${pv(el.rub)}</td>` : ''}<td>${pv(el.lib)}</td>${ECHELLE_GEN.map(sc => `<td class="pv-c">${j.val === sc.k ? '<b>X</b>' : ''}</td>`).join('')}</tr>`;
+    const gris = cycleGris(f, el) && j.na ? ' style="background:#d9d9d9"' : '';
+    grid += `<tr${gris}>${first ? `<td rowspan="${span < 0 ? its.length - k : span}" class="pv-rub"${gris}>${pv(el.rub)}</td>` : ''}<td>${pv(el.lib)}</td>${ECHELLE_GEN.map(sc => `<td class="pv-c">${j.val === sc.k ? '<b>X</b>' : ''}</td>`).join('')}</tr>`;
   });
   const syn = [['org', 'Organisation'], ['ani', 'Animation'], ['eva', 'Évaluation']].map(([k, l]) => `<tr><td><b>${l}</b></td><td>${lines(f.redac[k].pos)}</td><td>${lines(f.redac[k].ame)}</td><td>${lines(f.redac[k].rec)}</td></tr>`).join('');
   return `${pvHeader(f)}
@@ -4756,6 +4841,9 @@ function setNumero(ctx, tHead, f) {
   const ts = Array.from(p.getElementsByTagNameNS(WNS, 't')); if (!ts.length) return;
   ts[0].textContent = 'Nº ' + num; ts[0].setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve'); ts.slice(1).forEach(t => { t.textContent = ''; });
 }
+function shadeCell(ctx, tc, fill) { let pr = ctx.kids(tc, 'tcPr')[0]; if (!pr) { pr = ctx.doc.createElementNS(WNS, 'w:tcPr'); tc.insertBefore(pr, tc.firstChild); }
+  ctx.kids(pr, 'shd').forEach(n => pr.removeChild(n)); const sh = ctx.doc.createElementNS(WNS, 'w:shd'); sh.setAttributeNS(WNS, 'w:val', 'clear'); sh.setAttributeNS(WNS, 'w:color', 'auto'); sh.setAttributeNS(WNS, 'w:fill', fill || 'D9D9D9');
+  const after = ['noWrap', 'tcMar', 'textDirection', 'tcFitText', 'vAlign', 'hideMark'].map(n => ctx.kids(pr, n)[0]).find(Boolean); pr.insertBefore(sh, after || null); }
 async function buildGen(f) {
   const zip = await JSZip.loadAsync(b64ToBytes(TPL_GEN));
   const ctx = makeCtx(await zip.file('word/document.xml').async('string'));
@@ -4794,6 +4882,7 @@ async function buildGen(f) {
     const tr = rows[k]; if (!tr) return; const tcs = ctx.cells(tr);
     if (el.horsBulletin) { tr.parentNode.removeChild(tr); return; } // ligne propre à la lecture : retirée du bulletin de mathématiques
     if (el.canevas) { const lc = tcs[tcs.length - 7]; const ps = ctx.kids(lc, 'p'); ctx.rewrite(ps[0], [{ t: el.lib }]); ps.slice(1).forEach(p => lc.removeChild(p)); } // libellé mathématiques seul
+    if (cycleGris(f, el) && naEff(f, el)) tcs.forEach(tc => shadeCell(ctx, tc)); // pratiques de l'autre cycle grisées
     const v = justify(f, el).val; if (!v) return; const col = ECHELLE_GEN.findIndex(x => x.k === v); ctx.putX(tcs[tcs.length - 6 + col]);
   });
   // Synthèse par rubrique
