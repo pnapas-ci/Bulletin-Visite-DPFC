@@ -121,7 +121,7 @@ label.f.miss input,label.f.miss select,label.f.miss textarea{border-color:var(--
 .paperwrap{overflow-x:auto} .paper{background:#fff;color:#111;max-width:860px;margin:0 auto;padding:28px 30px;border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.08);font-family:"Times New Roman",Georgia,serif;font-size:13.5px;line-height:1.35;min-width:0}
 .paper table{border-collapse:collapse;width:100%;margin:8px 0} .pv-t td,.pv-t th{border:1px solid #333;padding:4px 6px;vertical-align:top} .pv-t th{background:#e6e6e6;font-weight:700;text-align:center}
 .pv-head td{vertical-align:top;font-size:12px;text-align:center;width:60%} .pv-head .pv-r{width:40%}
-.pv-title{text-align:center;font-family:inherit;font-size:16px;text-decoration:underline;margin:10px 0} .pv-sec{font-family:inherit;font-size:14px;text-align:center;margin:14px 0 4px}
+.pv-title{text-align:center;font-family:inherit;font-size:16px;text-decoration:underline;margin:10px 0} .pv-noir{background:#000;color:#fff;text-decoration:none;padding:5px 8px;-webkit-print-color-adjust:exact;print-color-adjust:exact} .pv-sec{font-family:inherit;font-size:14px;text-align:center;margin:14px 0 4px}
 .pv-annex{page-break-before:always;border-top:2px dashed #999;padding-top:14px;margin-top:22px}
 .pv-id td div{margin:2px 0} .pv-c{text-align:center;white-space:nowrap} .pv-rub{font-weight:700;width:18%} .pv-grid td{font-size:12.5px}
 .pv-sub td{background:#f0f0f0;font-weight:700} .pv-ko{color:#b8392f;font-weight:700} .pv-obs{margin-top:6px}
@@ -148,7 +148,16 @@ label.f.miss input,label.f.miss select,label.f.miss textarea{border-color:var(--
 #maj{background:#fff4d6;border-bottom:1px solid #e6c36a;color:#3d2c00}#maj .maj-in{max-width:980px;margin:0 auto;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.9rem}#maj .maj-in>span{flex:1 1 240px}#maj a.btn{text-decoration:none;color:inherit}
 #maj-ok{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px}.maj-box{background:var(--surface);color:var(--ink);border-radius:14px;max-width:520px;width:100%;max-height:85vh;overflow:auto;padding:20px}.maj-box h2{margin:0 0 6px;font-size:1.2rem}.maj-box ul{margin:4px 0 10px;padding-left:1.2em}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #maj{background:#3a3016;border-color:#6b5420;color:#f3e2b0}}
-.stepper{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;padding:8px 0 10px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.stepper{display:block;max-width:100%;min-width:0;overflow:hidden;padding:8px 0 10px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+.st-top{display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:space-between;align-items:baseline}.st-cur{font-size:1.02rem}
+.st-bar{height:6px;border-radius:3px;background:var(--surface2);margin:6px 0 8px;overflow:hidden}.st-bar span{display:block;height:100%;background:var(--brand);border-radius:3px}
+.st-chips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:thin}.st-chips .chip{flex:0 0 auto}
+.st-aide{margin:8px 0 0;padding:9px 12px;border-left:4px solid var(--brand);background:var(--surface2);border-radius:6px;font-size:.92rem}
+.act-card{width:100%}.act-card.sel{border:2px solid var(--brand);box-shadow:0 0 0 3px rgba(0,0,0,.04)}.act-n{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:var(--brand);color:#fff;font-weight:700;font-size:1.2rem}
+.part-h{margin:22px 0 6px;font-size:1.05rem;display:flex;gap:6px;align-items:center}
+.h-start{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+.h-go{display:inline-flex;gap:10px;align-items:center;font-size:1.12rem;padding:14px 22px;min-height:52px}.h-go svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2}
+.h-steps{margin:14px 0 6px;padding-left:22px;display:grid;gap:6px}.h-steps li b{display:block}.h-steps li span{color:var(--muted);font-size:.9rem}
 .stepper .chip{padding:7px 13px}.stepper .stn{display:inline-flex;align-items:center;justify-content:center;width:1.35em;height:1.35em;border-radius:50%;font-size:.78em;background:var(--surface2);color:var(--ink);margin-right:2px}
 .stepper .chip[aria-pressed="true"] .stn{background:#fff;color:var(--brand)}.stc{font-size:.8rem;color:var(--muted)}
 .stepnav{display:flex;justify-content:space-between;gap:10px;margin:14px 0 4px}
@@ -1973,7 +1982,30 @@ const actDetail = (name) => ACT_DETAILS[name] || ACT_DETAILS[Object.keys(ACT_DET
    1 Renseignements · 2 Observation · 3 Bilan · 4 Conseils et conclusion (ou tout afficher).
    Ajouts : synthèse chiffrée (indice de maîtrise), conseil en face de chaque point de défaillance,
    appréciation retenue par l'encadreur, clôture de la visite, temps par moment didactique. */
-const ETAPES = [[1, 'Renseignements'], [2, 'Observation'], [3, 'Bilan'], [4, 'Conseils et conclusion']];
+const ETAPES = [[1, 'Enseignant(e)'], [2, 'Activité'], [3, 'En-tête de la séance'], [4, 'Développement'], [5, 'Évaluation'], [6, 'Environnement de la classe'], [7, 'Bilan'], [8, 'Conclusion']];
+const NB_ETAPES = ETAPES.length;
+// Ce que l'on fait à chaque étape (aide intégrée, sans manuel)
+const AIDE = {
+  1: 'Tapez le nom de l’enseignant(e) : s’il est dans la base, toute l’identification se remplit. Sinon, complétez les champs. Indiquez la classe visitée et l’effectif.',
+  2: 'Choisissez le bulletin à remplir : Développement de compétences ou Remédiation (soutien aux apprentissages).',
+  3: 'Choisissez la discipline, la semaine et la séance (ou la leçon) : l’en-tête se remplit. Lancez le chronomètre au début de la séance. Vérifiez la préparation (fiche, supports, matériel).',
+  4: 'Pendant la séance, suivez les étapes dans l’ordre : touchez « Fait » ou « Non fait » pour chaque action, « Posée » ou « Non posée » pour chaque question. Appréciez ensuite les pratiques enseignantes.',
+  5: 'Cochez les actions de l’évaluation et appréciez l’évaluation des apprentissages (exercices, correction, taux de réussite).',
+  6: 'Observez la classe : aspect, affichages, documents et auxiliaires pédagogiques, matériel. Cochez les indicateurs : l’appréciation se coche seule.',
+  7: 'Relisez la synthèse chiffrée, puis touchez « Rédiger automatiquement » : la synthèse et l’appréciation se rédigent. Tout reste modifiable.',
+  8: 'Écrivez un conseil en face de chaque point faible, retenez l’appréciation, cochez la clôture, puis touchez « Générer la fiche » pour obtenir le bulletin.'
+};
+// Répartition du déroulé et de la grille entre les étapes
+function partOfStep(f, st) { if (st.pre) return 'entete'; const SD = f.kind === 'gen' ? STEP_DOM_GEN : STEP_DOM; return (st.dom || SD[st.id] || 'ani') === 'eva' ? 'eva' : 'dev'; }
+function partOfItem(f, el) { if (poolOf(el) === 'env') return 'env'; const k = domKey(el); return k === 'org' ? 'entete' : k === 'eva' ? 'eva' : 'dev'; }
+function activiteSection(f) {
+  const cur = f.actOk ? f.kind : '';
+  const carte = (v, n, t, d) => `<button class="h-card act-card${cur === v ? ' sel' : ''}" data-act="choisir-act" data-v="${v}" aria-pressed="${cur === v}"><span class="act-n">${n}</span><span class="h-txt"><span class="h-t">${t}</span><span class="h-d">${d}</span></span><span class="h-arrow" aria-hidden="true">→</span></button>`;
+  return sec('activite', 'Activité à observer', cur ? (cur === 'gen' ? 'Développement de compétences' : 'Remédiation') : 'à choisir', `<div class="h-grid">
+    ${carte('gen', '1', 'Développement de compétences', 'Séance de classe : mathématiques et français du CP1 au CE2 (PNAPAS), autres disciplines et classes de CM.')}
+    ${carte('sou', '2', 'Remédiation', 'Soutien aux apprentissages : session avec plan de session, ou activité de soutien pendant le renforcement.')}</div>
+    <p class="hint">L’identification de l’enseignant(e) est reprise dans le bulletin choisi.</p>`);
+}
 const etapeDe = (f) => ((S.etape = S.etape || {})[f.kind]) || 1;
 const RET_LIB = { TS: 'très satisfaisante', S: 'satisfaisante', PS: 'peu satisfaisante', INS: 'insuffisante' };
 const RET_COURT = { TS: 'Très satisfaisant', S: 'Satisfaisant', PS: 'Peu satisfaisant', INS: 'Insatisfaisant' };
@@ -1986,14 +2018,17 @@ function comptage(f) {
   return { cot, tot, pts, ptsTot };
 }
 function stepperBar(f) {
-  const E = etapeDe(f); const c = comptage(f);
-  return `<nav class="stepper" aria-label="Étapes de la visite"><div class="chips">${ETAPES.map(([n, l]) => `<button class="chip" data-act="etape" data-v="${n}" aria-pressed="${E === n}"${E === n ? ' aria-current="step"' : ''}><span class="stn">${n}</span> ${l}</button>`).join('')}<button class="chip" data-act="etape" data-v="all" aria-pressed="${E === 'all'}">Tout afficher</button></div>
-    <span class="stc">${c.cot} / ${c.tot} éléments cotés · ${c.pts} / ${c.ptsTot} actions renseignées</span></nav>`;
+  const E = etapeDe(f); const c = comptage(f); const lib = (ETAPES.find(([n]) => n === E) || [0, 'Fiche entière'])[1];
+  return `<nav class="stepper" aria-label="Étapes de la visite">
+    <div class="st-top"><span class="st-cur">${E === 'all' ? 'Fiche entière' : `Étape ${E} sur ${NB_ETAPES} · <b>${esc(lib)}</b>`}</span><span class="stc">${c.cot}/${c.tot} éléments cotés · ${c.pts}/${c.ptsTot} actions</span></div>
+    <div class="st-bar" aria-hidden="true"><span style="width:${E === 'all' ? 100 : Math.round(100 * E / NB_ETAPES)}%"></span></div>
+    <div class="chips st-chips">${ETAPES.map(([n, l]) => `<button class="chip" data-act="etape" data-v="${n}" aria-pressed="${E === n}"${E === n ? ' aria-current="step"' : ''}><span class="stn">${n}</span> ${l}</button>`).join('')}<button class="chip" data-act="etape" data-v="all" aria-pressed="${E === 'all'}">Tout afficher</button></div>
+    ${E !== 'all' && AIDE[E] ? `<p class="st-aide"><b>Que faire ?</b> ${esc(AIDE[E])}</p>` : ''}</nav>`;
 }
 function stepNav(f) {
   const E = etapeDe(f); if (E === 'all') return '';
   const prev = ETAPES.find(([n]) => n === E - 1), next = ETAPES.find(([n]) => n === E + 1);
-  return `<div class="stepnav">${prev ? `<button class="btn" data-act="etape" data-v="${prev[0]}">← ${prev[1]}</button>` : '<span></span>'}${next ? `<button class="btn primary" data-act="etape" data-v="${next[0]}">${next[1]} →</button>` : ''}</div>`;
+  return `<div class="stepnav">${prev ? `<button class="btn" data-act="etape" data-v="${prev[0]}">← ${prev[1]}</button>` : '<span></span>'}${E === 2 && !f.actOk ? '<span class="hint">Choisissez l’activité ci-dessus.</span>' : next ? `<button class="btn primary" data-act="etape" data-v="${next[0]}">Suivant : ${next[1]} →</button>` : '<button class="btn primary" data-act="genbull">Générer la fiche</button>'}</div>`;
 }
 
 /* Rappel des pratiques enseignantes attendues (mathématiques PNAPAS, CP1 au CE2) */
@@ -2085,18 +2120,23 @@ function appliquerRetenue(f) {
 function formSteps(f) {
   const gen = f.kind === 'gen';
   const P = {
-    1: () => ensSection(f) + (gen ? seanceSection(f) : souSeanceSection(f)) + dureeSection(f) + (gen ? '' : planSection(f)),
-    2: () => rappelPratiques(f) + stepsSection(f) + grilleSection(f),
-    3: () => synthSection(f) + redacSection(f),
-    4: () => conseilsSection(f) + clotureSection(f) + signSection(f)
+    1: () => ensSection(f),
+    2: () => activiteSection(f),
+    3: () => (gen ? seanceSection(f) : souSeanceSection(f)) + dureeSection(f) + (gen ? '' : planSection(f)) + stepsSection(f, 'entete') + grillePart(f, null, 'entete'),
+    4: () => rappelPratiques(f) + stepsSection(f, 'dev') + grillePart(f, null, 'dev'),
+    5: () => stepsSection(f, 'eva') + grillePart(f, null, 'eva'),
+    6: () => grillePart(f, null, 'env'),
+    7: () => synthSection(f) + redacSection(f),
+    8: () => conseilsSection(f) + clotureSection(f) + signSection(f)
   };
   const E = etapeDe(f);
-  return stepperBar(f) + (E === 'all' ? [1, 2, 3, 4].map(k => P[k]()).join('') : P[E]()) + stepNav(f);
+  const body = E === 'all' ? ETAPES.map(([k, l]) => `<h2 class="part-h"><span class="stn">${k}</span> ${l}</h2>` + P[k]()).join('') : (P[E] ? P[E]() : P[1]());
+  return stepperBar(f) + (body || '<div class="empty">Rien à observer à cette étape pour ce bulletin. Passez à l’étape suivante.</div>') + stepNav(f);
 }
 // Trouve l'étape qui contient un élément (pour les liens « informations manquantes »)
 function etapeDeCible(f, selector) {
   const probe = document.createElement('div');
-  for (const k of [1, 2, 3, 4]) { const keep = S.etape[f.kind]; S.etape[f.kind] = k; probe.innerHTML = formSteps(f); S.etape[f.kind] = keep; if (probe.querySelector(selector)) return k; }
+  for (const k of ETAPES.map(x => x[0])) { const keep = S.etape[f.kind]; S.etape[f.kind] = k; probe.innerHTML = formSteps(f); S.etape[f.kind] = keep; if (probe.querySelector(selector)) return k; }
   return 'all';
 }
 /* ========================= RÉDACTION CENTRÉE SUR LES PRATIQUES ENSEIGNANTES =========================
@@ -2227,7 +2267,7 @@ function homeView() {
   const clos = F.filter(x => x.cloture && x.cloture.entretien && x.cloture.emarge && x.appRetenue).length;
   const ceMois = F.filter(x => (x.date || '').slice(0, 7) === mois).length;
   const notes = F.map(x => scoreParts(x)).filter(x => x.n).map(x => x.w); const moy = notes.length ? notes.reduce((a, b) => a + b, 0) / notes.length : null;
-  const reprise = (f, kind, lib) => { const st = etapeDe(f); return `<div class="h-resume"><div><div class="h-k">${lib} en cours</div><b>${esc([f.ens.nom, f.ens.prenoms].filter(Boolean).join(' ') || 'Enseignant(e) non renseigné(e)')}</b><div class="hint">${esc([f.ens.classe, kind === 'gen' ? discOf(f) : 'Soutien aux apprentissages', f.date ? frDate(f.date) : ''].filter(Boolean).join(' · '))} · ${st === 'all' ? 'fiche entière' : 'étape ' + st + ' sur 4'} · ${ficheEnCours(f).c.cot}/${ficheEnCours(f).c.tot} éléments cotés</div></div><button class="btn primary" data-act="home-go" data-v="${kind}">Reprendre</button></div>`; };
+  const reprise = (f, kind, lib) => { const st = etapeDe(f); return `<div class="h-resume"><div><div class="h-k">${lib} en cours</div><b>${esc([f.ens.nom, f.ens.prenoms].filter(Boolean).join(' ') || 'Enseignant(e) non renseigné(e)')}</b><div class="hint">${esc([f.ens.classe, kind === 'gen' ? discOf(f) : 'Soutien aux apprentissages', f.date ? frDate(f.date) : ''].filter(Boolean).join(' · '))} · ${st === 'all' ? 'fiche entière' : 'étape ' + st + ' sur ' + NB_ETAPES} · ${ficheEnCours(f).c.cot}/${ficheEnCours(f).c.tot} éléments cotés</div></div><button class="btn primary" data-act="home-go" data-v="${kind}">Reprendre</button></div>`; };
   const carte = (v, ico, tag, titre, txt) => `<button class="h-card" data-act="home-go" data-v="${v}"><span class="h-ico">${ico}</span><span class="h-txt"><span class="h-k">${tag}</span><span class="h-t">${titre}</span><span class="h-d">${txt}</span></span><span class="h-arrow" aria-hidden="true">→</span></button>`;
   const pf = plateformeAppareil(); const inst = appInstallee();
   const consignes = { android: 'Dans Chrome : bouton « Installer » ci-dessous, ou menu ⋮ → « Installer l’application ».', ios: 'Dans Safari : bouton Partager (carré avec une flèche), puis « Sur l’écran d’accueil ».', ordi: 'Dans Chrome ou Edge : bouton « Installer » ci-dessous, ou icône d’installation au bout de la barre d’adresse.' };
@@ -2235,14 +2275,19 @@ function homeView() {
   return `<section class="h-hero">
     <div class="h-logo" aria-hidden="true"><svg viewBox="0 0 96 96"><rect width="96" height="96" rx="20" fill="var(--brand)"/><rect x="24" y="18" width="48" height="60" rx="5" fill="#fff"/><path d="M33 36h30M33 47h30M33 58h18" stroke="var(--brand)" stroke-width="5" stroke-linecap="round"/><circle cx="66" cy="66" r="12" fill="#e07b24"/><path d="M60 66l4 4 8-8" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg></div>
     <div><p class="h-k">DPFC · PNAPAS · ${esc(frDate(today()))}</p><h2 class="h-title">${S.cfg.conseiller ? 'Bonjour ' + esc(S.cfg.conseiller.split(' ')[0]) + ', observer' : 'Observer'} une séance, dresser le bilan</h2>
-    <p class="h-lead">Choisissez le bulletin, cochez les actions de l’enseignant(e) pendant l’observation, puis laissez l’outil rédiger la synthèse et produire le bulletin officiel en Word ou en PDF. Tout fonctionne sans connexion.</p></div></section>
+    <p class="h-lead">Identifiez l’enseignant(e), choisissez l’activité, cochez les actions de l’enseignant(e) pendant l’observation, puis laissez l’outil rédiger la synthèse et produire le bulletin officiel en Word ou en PDF. Tout fonctionne sans connexion.</p></div></section>
   ${!g.vide ? reprise(S.gen, 'gen', 'Visite de classe') : ''}${!s.vide ? reprise(S.sou, 'sou', 'Fiche de soutien') : ''}
-  <h3 class="h-sec">Nouvelle visite</h3>
-  <div class="h-grid">
-    ${carte('dev', ICO.visite, 'PNAPAS · CP1 au CE2', 'Développement de compétences', 'Mathématiques et français : acquisition, renforcement, fixation, évaluation.')}
-    ${carte('autres', ICO.autres, 'Programmes éducatifs · CP1 au CM2', 'Autres disciplines et classes de CM', 'EDHC, EPS, AEC, Histoire-Géographie, Sciences et technologie ; toutes les disciplines au CM.')}
-    ${carte('sou', ICO.soutien, 'PNAPAS', 'Soutien aux apprentissages', 'Session de soutien avec plan de session, ou activité de soutien pendant le renforcement.')}
-  </div>
+  <section class="h-start">
+    <button class="btn primary h-go" data-act="visite-neuve">${ICO.visite}<span>Commencer une visite</span></button>
+    <ol class="h-steps">
+      <li><b>Enseignant(e)</b><span>Tapez le nom : l’identification se remplit.</span></li>
+      <li><b>Activité</b><span>1. Développement de compétences ou 2. Remédiation.</span></li>
+      <li><b>En-tête, Développement, Évaluation</b><span>Cochez les actions et les questions, étape par étape.</span></li>
+      <li><b>Environnement de la classe</b><span>Environnement et auxiliaires pédagogiques.</span></li>
+      <li><b>Bilan et conclusion</b><span>Rédaction automatique, puis bulletin Word ou PDF.</span></li>
+    </ol>
+    <p class="hint">Un bouton « Suivant » en bas de chaque écran mène à l’étape suivante. « Que faire ? » rappelle la consigne de l’étape.</p>
+  </section>
   <h3 class="h-sec">Mon activité</h3>
   <div class="h-stats"><div><b>${F.length}</b><span>fiche${F.length > 1 ? 's' : ''} enregistrée${F.length > 1 ? 's' : ''}</span></div><div><b>${ceMois}</b><span>visite${ceMois > 1 ? 's' : ''} ce mois-ci</span></div><div><b>${clos}</b><span>clôturée${clos > 1 ? 's' : ''}</span></div><div><b>${moy === null ? '—' : fmt1(moy) + '/4'}</b><span>note pondérée moyenne</span></div></div>
   <div class="h-grid h-small">
@@ -2266,8 +2311,8 @@ window.addEventListener('appinstalled', () => { window.__dpfcInstall = null; if 
    L'application compare sa version à celle publiée sur le site (version.json).
    En ligne : la nouvelle version s'installe seule (à l'ouverture) ou d'un toucher ; les nouveautés s'affichent une fois.
    Fichier hors ligne : un bandeau propose de télécharger la nouvelle version. */
-const APP_VERSION = '2026.11.22.1';
-const APP_HISTO = [{"version": "2026.11.22.1", "date": "2026-11-22", "notes": ["Bulletin : selon la classe visitée, les pratiques enseignantes de l’autre cycle sont grisées (au CP, celles du CE-CM ; au CE et au CM, celles du CP).", "Aspects positifs, aspects à améliorer et recommandations du canevas : rédigés d’abord sur les pratiques enseignantes (manipulation, schématisation, questionnement), puis sur les points importants du bilan.", "Appréciation générale sans chiffres : appréciation de la prestation et encouragements."]}, {"version": "2026.11.21.2", "date": "2026-11-21", "notes": ["Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.", "Après chaque mise à jour, les nouveautés s’affichent une fois.", "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."]}, {"version": "2026.11.21.1", "date": "2026-11-21", "notes": ["Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.", "Page d’installation avec codes QR.", "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."]}, {"version": "2026.11.20.1", "date": "2026-11-20", "notes": ["Application installable sur smartphone et ordinateur ; utilisation hors ligne.", "Version d’essai avec identifiant d’appareil et code d’activation (jusqu’au 31 août 2027)."]}];
+const APP_VERSION = '2026.11.22.2';
+const APP_HISTO = [{"version": "2026.11.22.2", "date": "2026-11-22", "notes": ["Nouvelle présentation guidée : « Commencer une visite » depuis l’accueil, puis 8 étapes (Enseignant(e), Activité, En-tête de la séance, Développement, Évaluation, Environnement de la classe, Bilan, Conclusion).", "Étape Activité : choix entre 1. Développement de compétences et 2. Remédiation ; l’identification de l’enseignant(e) est reprise dans le bulletin choisi.", "Chaque étape affiche « Que faire ? », une barre de progression et un bouton « Suivant ».", "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » surligné en noir dans l’aperçu, le PDF et le Word."]}, {"version": "2026.11.22.1", "date": "2026-11-22", "notes": ["Bulletin : selon la classe visitée, les pratiques enseignantes de l’autre cycle sont grisées (au CP, celles du CE-CM ; au CE et au CM, celles du CP).", "Aspects positifs, aspects à améliorer et recommandations du canevas : rédigés d’abord sur les pratiques enseignantes (manipulation, schématisation, questionnement), puis sur les points importants du bilan.", "Appréciation générale sans chiffres : appréciation de la prestation et encouragements."]}, {"version": "2026.11.21.2", "date": "2026-11-21", "notes": ["Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.", "Après chaque mise à jour, les nouveautés s’affichent une fois.", "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."]}, {"version": "2026.11.21.1", "date": "2026-11-21", "notes": ["Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.", "Page d’installation avec codes QR.", "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."]}, {"version": "2026.11.20.1", "date": "2026-11-20", "notes": ["Application installable sur smartphone et ordinateur ; utilisation hors ligne.", "Version d’essai avec identifiant d’appareil et code d’activation (jusqu’au 31 août 2027)."]}];
 const MAJ_BASE = () => location.protocol === 'file:' ? SITE_DPFC : './';
 const MAJ = { info: null, t0: Date.now(), last: 0 };
 const vNum = (v) => String(v || '').split('.').map(x => String(+x || 0).padStart(4, '0')).join('.');
@@ -2954,11 +2999,14 @@ function planSection(f) {
   return sec('plan', 'Plan de session et gestion de la classe', pa.ko.length ? `${pa.ko.length} point${pa.ko.length > 1 ? 's' : ''} à revoir` : '', inner);
 }
 
-function stepsSection(f) {
+function stepsSection(f, part) {
   const steps = stepsOf(f);
   const totals = steps.map(st => stepAuto(f, st));
-  const nR = totals.filter(t => t.statut === 'R').length;
+  const keep = (st) => !part || partOfStep(f, st) === part;
+  if (!steps.some(keep)) return '';
+  const nR = totals.filter((t, i) => keep(steps[i]) && t.statut === 'R').length; const nK = steps.filter(keep).length;
   const html = steps.map((st, si) => {
+    if (!keep(st)) return '';
     const a = totals[si]; const d = stepData(f, st);
     const num = st.pre ? 'Avant' : steps.slice(0, si + 1).filter(x => !x.pre).length;
     if (a.off) return `<div class="step off" id="step-${si}"><div class="step-h"><span class="num">${num}</span><h3>${esc(st.nom)}</h3><span class="status st-NA">Non prévue</span></div>
@@ -2984,13 +3032,16 @@ function stepsSection(f) {
         <span class="mention">${a.manual ? 'Choix manuel du conseiller' + (a.auto ? ` (déduit des points : ${ST_LIB[a.auto]})` : '') : a.auto ? 'Déduit des points cochés' : 'Cochez les points pour déduire le statut'}</span>
         <textarea class="inp" data-k="gobs" data-s="${si}" placeholder="Observation générale sur l’étape">${esc(d.gobs)}</textarea></div></div>`;
   }).join('');
-  const title = f.kind === 'gen' ? `Déroulé de la séance · ${TYPES_SEANCE[f.seance.nature]}` : 'Déroulé de l’activité';
-  return sec('steps', title, `${steps.length} étapes · ${nR} réalisée${nR > 1 ? 's' : ''}`, `<p class="hint">Pour chaque étape, cochez ce que l’enseignant.e fait et les questions posées. Le statut se déduit tout seul ; vous pouvez le changer d’un toucher.</p>${html}`);
+  const T0 = f.kind === 'gen' ? `Déroulé de la séance · ${natLib(f.seance.nature)}` : 'Déroulé de l’activité';
+  const title = part === 'entete' ? 'Avant la séance : préparation' : part === 'eva' ? 'Déroulé de l’évaluation' : part === 'dev' ? (f.kind === 'gen' ? `Déroulé du développement · ${natLib(f.seance.nature)}` : 'Déroulé de l’activité') : T0;
+  return sec(part && part !== 'dev' ? 'steps-' + part : 'steps', title, `${nK} étape${nK > 1 ? 's' : ''} · ${nR} réalisée${nR > 1 ? 's' : ''}`, `<p class="hint">Pour chaque étape, cochez ce que l’enseignant.e fait et les questions posées. Le statut se déduit tout seul ; vous pouvez le changer d’un toucher.</p>${html}`);
 }
 
 function grilleSection(f) { return grillePart(f, 'env') + grillePart(f, 'prat'); }
-function grillePart(f, pool) {
-  const sc = scaleOf(f); const allItems = gridItems(f.kind, f); const items = allItems.filter(el => poolOf(el) === pool);
+function grillePart(f, pool, part) {
+  if (part) pool = part === 'env' ? 'env' : 'prat';
+  const sc = scaleOf(f); const allItems = gridItems(f.kind, f); const items = allItems.filter(el => part ? partOfItem(f, el) === part : poolOf(el) === pool);
+  if (!items.length) return '';
   let lastRub = null, lastDom = null; let html = '';
   let filled = 0, total = 0;
   items.forEach(el => {
@@ -3021,10 +3072,12 @@ function grillePart(f, pool) {
   const mapping = f.kind === 'gen' ? '<div class="callout">Les rubriques « Pratiques enseignantes au CP » et « au CE et au CM » se mettent en non applicable d’office selon la classe ; la ligne propre à la lecture aussi. Vous pouvez les réintégrer.</div>' : '';
   const legend = `<div class="legend">${sc.map(s => `<span><b>${s.k}</b> ${s.lib}</span>`).join('')}<span>L’appréciation se coche automatiquement selon les indicateurs ; touchez une autre valeur pour la modifier (bordure orange = valeur automatique)</span></div>`;
   const DEFV = { 4: 'Appliqué correctement, systématiquement et avec tous les élèves ; dépasse les attentes.', 3: 'Appliqué correctement ; répond pleinement aux attentes et aux objectifs fixés.', 2: 'Appliqué partiellement ; des améliorations importantes sont nécessaires.', 1: 'Appliqué de façon non conforme ; ne répond pas aux attentes.', 0: 'Pas appliqué alors que la séance l’exigeait.' };
-  const defs = pool === 'env' ? `<details class="degres"><summary>Définitions de l’échelle et calculs</summary><div class="tablewrap"><table class="t"><thead><tr><th>Code</th><th>Libellé</th><th>Constat observable</th><th>Valeur</th></tr></thead><tbody>${sc.map(x => `<tr><td><b>${x.k}</b></td><td>${esc(x.lib)}</td><td>${x.v === null ? 'Ne s’applique pas à la séance observée : n’entre pas dans les calculs.' : esc(DEFV[x.v] || '')}</td><td>${x.v === null ? 'exclu' : x.v}</td></tr>`).join('')}</tbody></table></div><p class="hint">Points forts : ${sc.filter(x => x.v !== null && x.v >= 3).map(x => x.k).join(' et ')} ; points à améliorer : ${sc.filter(x => x.v !== null && x.v < 3).map(x => x.k).join(', ')}. Indice de maîtrise = somme des valeurs ÷ (nombre d’éléments cotés × 4). Appréciation générale : note pondérée, 70 % pratiques enseignantes et maîtrise du contenu, 30 % environnement et auxiliaires pédagogiques.</p></details>` : '';
+  const defs = (part ? (part === 'dev' || part === 'env') : pool === 'env') ? `<details class="degres"><summary>Définitions de l’échelle et calculs</summary><div class="tablewrap"><table class="t"><thead><tr><th>Code</th><th>Libellé</th><th>Constat observable</th><th>Valeur</th></tr></thead><tbody>${sc.map(x => `<tr><td><b>${x.k}</b></td><td>${esc(x.lib)}</td><td>${x.v === null ? 'Ne s’applique pas à la séance observée : n’entre pas dans les calculs.' : esc(DEFV[x.v] || '')}</td><td>${x.v === null ? 'exclu' : x.v}</td></tr>`).join('')}</tbody></table></div><p class="hint">Points forts : ${sc.filter(x => x.v !== null && x.v >= 3).map(x => x.k).join(' et ')} ; points à améliorer : ${sc.filter(x => x.v !== null && x.v < 3).map(x => x.k).join(', ')}. Indice de maîtrise = somme des valeurs ÷ (nombre d’éléments cotés × 4). Appréciation générale : note pondérée, 70 % pratiques enseignantes et maîtrise du contenu, 30 % environnement et auxiliaires pédagogiques.</p></details>` : '';
   const sp = scoreParts(f); const note = sp[pool] === null ? '' : ` · ${fmt1(sp[pool])}/4`;
   const poids = `<p class="hint"><b>Poids dans l’appréciation générale : ${pool === 'prat' ? '70 %' : '30 %'}.</b> ${pool === 'prat' ? 'Pratiques enseignantes, maîtrise du contenu enseigné et compréhension du contenu à enseigner, vérifiée à travers l’évaluation (préparation, animation, évaluation).' : 'Aspect de la classe, documents et auxiliaires pédagogiques, supports et matériel.'}</p>`;
-  return sec(pool === 'env' ? 'grille' : 'grille2', pool === 'env' ? 'Environnement et auxiliaires pédagogiques' : 'Pratiques enseignantes et maîtrise du contenu', `${filled}/${total} appréciés${note}`, (pool === 'env' ? '' : mapping) + poids + legend + defs + html);
+  const PT = { entete: ['grille-entete', 'Préparation de la séance'], dev: ['grille2', 'Pratiques enseignantes et animation'], eva: ['grille-eva', 'Évaluation des apprentissages'], env: ['grille', 'Environnement et auxiliaires pédagogiques'] };
+  const [sid, stit] = part ? PT[part] : (pool === 'env' ? PT.env : ['grille2', 'Pratiques enseignantes et maîtrise du contenu']);
+  return sec(sid, stit + (part && part !== 'env' ? ' (grille)' : ''), `${filled}/${total} appréciés${note}`, (part ? (part === 'dev' ? mapping : '') : (pool === 'env' ? '' : mapping)) + poids + legend + defs + html);
 }
 
 function redacSection(f) {
@@ -3255,6 +3308,12 @@ document.addEventListener('click', (ev) => {
       render(); window.scrollTo(0, 0); if (v === 'autres' && ficheEnCours(S.gen).vide) { const t = document.querySelector('[data-sec="seance"]'); if (t) t.scrollIntoView({ block: 'start' }); } return; }
     case 'install': if (window.__dpfcInstall) { const e = window.__dpfcInstall; e.prompt(); e.userChoice.then(() => { window.__dpfcInstall = null; render(); }); } return;
     case 'copier-lien': { const l = b.dataset.v; (navigator.clipboard ? navigator.clipboard.writeText(l) : Promise.reject()).then(() => toast('Lien copié : ' + l), () => toast(l)); return; }
+    case 'choisir-act': { const v = b.dataset.v; const src = f; const dst = v === 'gen' ? S.gen : S.sou;
+      if (src !== dst) { dst.ens = { ...(dst.ens || {}), ...(src.ens || {}) }; if (src.date) dst.date = src.date; }
+      dst.actOk = true; if (v === 'gen' && typeof syncNiveau === 'function') syncNiveau(dst); S.tab = v; S.preview[v] = false; S.etape = S.etape || {}; S.etape[v] = 3; render(); window.scrollTo(0, 0); return; }
+    case 'visite-neuve': { // la fiche en cours (non vide) est d'abord enregistrée, pour ne rien perdre
+      [S.gen, S.sou].forEach(x => { if (!ficheEnCours(x).vide) { const i = S.fiches.findIndex(y => y.id === x.id); const c = JSON.parse(JSON.stringify(x)); if (i >= 0) S.fiches[i] = c; else S.fiches.push(c); } }); LS.set('gv_fiches', S.fiches);
+      S.gen = newGen(); S.sou = newSou(); persistDraft(); S.tab = 'gen'; S.preview.gen = false; S.etape = { gen: 1, sou: 1 }; render(); window.scrollTo(0, 0); toast('Nouvelle visite : commencez par identifier l’enseignant(e).'); return; }
     case 'etape': { S.etape = S.etape || {}; S.etape[f.kind] = b.dataset.v === 'all' ? 'all' : +b.dataset.v; render(); const st = document.querySelector('.stepper'); if (st) st.scrollIntoView({ block: 'start' }); return; }
     case 'app-ret': f.appRetenue = f.appRetenue === b.dataset.v ? '' : b.dataset.v; appliquerRetenue(f); break;
     case 'clot': f.cloture = f.cloture || {}; f.cloture[b.dataset.v] = !f.cloture[b.dataset.v]; break;
@@ -3471,7 +3530,7 @@ function bulletinGen(f) {
   });
   const syn = [['org', 'Organisation'], ['ani', 'Animation'], ['eva', 'Évaluation']].map(([k, l]) => `<tr><td><b>${l}</b></td><td>${lines(f.redac[k].pos)}</td><td>${lines(f.redac[k].ame)}</td><td>${lines(f.redac[k].rec)}</td></tr>`).join('');
   return `${pvHeader(f)}
-  <h2 class="pv-title">BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES</h2>
+  <h2 class="pv-title pv-noir">BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES</h2>
   <p class="pv-small" style="text-align:center;font-style:italic;font-weight:700;margin:0 0 6px">Cet outil est à l’usage des IEPP - IPC – IPPP - CPPP – DEP – Tout autre superviseur</p>
   <table class="pv-t pv-id"><tr><th>IDENTIFICATION DE L’ENSEIGNANT</th><th>ÉCOLE ET CLASSE DE L’ENSEIGNANT</th></tr><tr>
     <td><div>Nom : ${blank(e.nom)} Prénoms : ${blank(e.prenoms)} Matricule : ${blank(e.matricule)}</div><div>Contact(s) : ${blank(e.contact)}</div>

@@ -1,6 +1,6 @@
 // Bulletin de visite DPFC : en ligne, toujours la dernière version publiée ; hors ligne, la dernière version téléchargée.
 // Le nom du cache change à chaque version : les anciennes copies sont effacées.
-const C = 'dpfc-bulletin-2026.11.22.1';
+const C = 'dpfc-bulletin-2026.11.22.2';
 const PAGES = ['./', './index.html', './essai.html', './manifest.webmanifest', './manifest-essai.webmanifest', './icone.svg', './icone-192.png', './icone-512.png', './icone-maskable-512.png', './apple-touch-icon.png', './favicon-32.png', './installer.html'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => Promise.all(PAGES.map(p => c.add(p).catch(() => null))))); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
