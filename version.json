@@ -1,13 +1,21 @@
 {
-  "version": "2026.11.22.2",
-  "date": "2026-11-22",
+  "version": "2026.11.23.1",
+  "date": "2026-11-23",
   "notes": [
-    "Nouvelle présentation guidée : « Commencer une visite » depuis l’accueil, puis 8 étapes (Enseignant(e), Activité, En-tête de la séance, Développement, Évaluation, Environnement de la classe, Bilan, Conclusion).",
-    "Étape Activité : choix entre 1. Développement de compétences et 2. Remédiation ; l’identification de l’enseignant(e) est reprise dans le bulletin choisi.",
-    "Chaque étape affiche « Que faire ? », une barre de progression et un bouton « Suivant ».",
-    "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » surligné en noir dans l’aperçu, le PDF et le Word."
+    "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » : bande noire sur toute la largeur et lettres blanches, à l’écran, en PDF, à l’impression et dans le Word.",
+    "Bilan de la visite : suppression des diagrammes en barres.",
+    "Aspects positifs, aspects à améliorer et recommandations : plus de « Néant ». Chaque aspect à améliorer (action non faite ou insuffisante) reçoit sa recommandation, dans le même ordre (ex. « L’enseignant(e) ne fait pas ressortir le titre de la séance » → « Faire ressortir le titre de la séance »)."
   ],
   "historique": [
+    {
+      "version": "2026.11.23.1",
+      "date": "2026-11-23",
+      "notes": [
+        "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » : bande noire sur toute la largeur et lettres blanches, à l’écran, en PDF, à l’impression et dans le Word.",
+        "Bilan de la visite : suppression des diagrammes en barres.",
+        "Aspects positifs, aspects à améliorer et recommandations : plus de « Néant ». Chaque aspect à améliorer (action non faite ou insuffisante) reçoit sa recommandation, dans le même ordre (ex. « L’enseignant(e) ne fait pas ressortir le titre de la séance » → « Faire ressortir le titre de la séance »)."
+      ]
+    },
     {
       "version": "2026.11.22.2",
       "date": "2026-11-22",
