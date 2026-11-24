@@ -2165,6 +2165,7 @@ const PRAT_FR = {
   ceSchema: { nom: 'la lecture silencieuse', fort: 'fait lire silencieusement chaque apprenant(e) dans son propre livre', effort: 'la lecture silencieuse dans son propre livre' },
   ceQuest: { nom: 'le retour sur le texte', fort: 'conduit le retour sur le texte (mots nouveaux, résumé, compréhension)', effort: 'le retour sur le texte (compréhension)' }
 };
+const niv = (v, f) => (((f && (scaleOf(f).find(x => x.k === v) || {}).lib) || (typeof LVL_LIB !== 'undefined' && LVL_LIB[v]) || v || '') + '').toLowerCase();
 const joinEt = (a) => a.length < 2 ? (a[0] || '') : a.slice(0, -1).join(', ') + ' et ' + a[a.length - 1];
 const majus = (t) => t ? t.charAt(0).toUpperCase() + t.slice(1) : t;
 // Analyse des trois pratiques clés : critère de la grille + actions du déroulé qui s'y rapportent
@@ -2203,29 +2204,30 @@ function infinitif(x) { const V = verbeDe(x); if (!V) return 'Réaliser cette ac
 function negation(x) { const V = verbeDe(x); if (!V) return null; const pron = V.pron ? (/^S’/.test(V.pron) ? 's’' : 'se ') : ''; const head = (pron || lc(V.v)); const ne = /^[aeiouyhàâéèêîôû]/i.test(head) ? 'n’' : 'ne '; return ne + pron + lc(V.v) + ' pas' + V.rest; }
 const finPoint = (t) => { t = String(t || '').trim(); return /[.!?»]$/.test(t) ? t : t + '.'; };
 // Action ou question non faite : constat + recommandation
+const nomEt = (st) => String(st.nom).replace(/ : /, ' – ');
 function paireAction(p, st, obs) {
-  const o = obs ? ` (${String(obs).trim().replace(/[.]$/, '')})` : '';
+  const E = nomEt(st); const o = obs ? ` (${String(obs).trim().replace(/[.]$/, '')})` : '';
   const neg = String(p.x).match(/^Ne (\S+) pas (.+)$/s) || String(p.x).match(/^N’(\S+) pas (.+)$/s);
   if (neg) { const pos = majus((/^N’/.test(p.x) ? '' : '') + neg[1]) + ' ' + neg[2]; const V = verbeDe(pos);
-    return { ame: finPoint(`L’enseignant(e) ${lc(pos)}${o} – étape « ${st.nom} »`), rec: finPoint(V ? 'Ne pas ' + lc(V.inf) + V.rest : p.x) }; }
+    return { ame: finPoint(`${E} : l’enseignant(e) ${lc(pos)}${o}`), rec: finPoint(V ? 'Ne pas ' + lc(V.inf) + V.rest : p.x) }; }
   const adv = String(p.x).match(/^((?:Par|Pour|En|Avec|Sans|À)\s[^,]{2,60}),\s*(.+)$/s);
-  if (adv && verbeDe(majus(adv[2]))) { const x2 = majus(adv[2]); return { ame: finPoint(`L’enseignant(e) ${negation(x2)} (${lc(adv[1])})${o} – étape « ${st.nom} »`), rec: finPoint(adv[1] + ', ' + lc(infinitif(x2))) }; }
+  if (adv && verbeDe(majus(adv[2]))) { const x2 = majus(adv[2]); return { ame: finPoint(`${E} : l’enseignant(e) ${negation(x2)} (${lc(adv[1])})${o}`), rec: finPoint(adv[1] + ', ' + lc(infinitif(x2))) }; }
   let x = p.x, pre = ''; if (!verbeDe(x)) { const m = x.match(/^([^:]{2,40}) : (.+)$/s); if (m && verbeDe(majus(m[2]))) { pre = m[1]; x = majus(m[2]); } }
   const n = negation(x); const ctx = pre ? ` (« ${pre} »)` : '';
-  return { ame: n ? finPoint(`L’enseignant(e) ${n}${ctx}${o} – étape « ${st.nom} »`) : finPoint(`« ${p.x} » non réalisé${o} – étape « ${st.nom} »`),
+  return { ame: n ? finPoint(`${E} : l’enseignant(e) ${n}${ctx}${o}`) : finPoint(`${E} : action non réalisée, « ${p.x} »${o}`),
     rec: verbeDe(x) ? finPoint((pre ? `« ${pre} » : ` + lc(infinitif(x)) : infinitif(x))) : finPoint(`Réaliser cette action : « ${p.x} »`) };
 }
 // Critère de la grille insuffisant : constat (indicateurs manquants) + recommandation du guide ou du conseiller
 function paireCritere(f, el, v) {
   const j = justify(f, el); const sc = scaleOf(f).find(x => x.k === v) || {};
-  return { ame: finPoint(`${el.lib} (${(sc.lib || v).toLowerCase()})` + (j.unmet.length ? ' : ' + j.unmet.slice(0, 3).map(lc).join(' ; ') : '')), rec: finPoint(conseilOf(f, el)) };
+  return { ame: finPoint(`${el.lib} : niveau ${(sc.lib || v).toLowerCase()}` + (j.unmet.length ? ' ; non observé : ' + j.unmet.slice(0, 3).map(lc).join(' ; ') : '')), rec: finPoint(conseilOf(f, el)) };
 }
 // Rubrique sans insuffisance : on consolide les critères seulement satisfaisants, puis on maintient les acquis
 function pairesConsolidation(f, k) {
   const out = []; const forts = [];
   gridItems(f.kind, f).forEach(el => { if (domKey(el) !== k) return; const j = justify(f, el); const v = j.val || j.sugg; if (!v || v === 'NA' || j.na) return;
-    if (v === 'S' || v === 'B') out.push({ ame: finPoint(`${el.lib} : satisfaisant, encore à consolider pour atteindre le niveau très satisfaisant`), rec: finPoint(conseilOf(f, el)) }); else if (isBon(v)) forts.push(lc(el.lib)); });
-  if (!out.length && forts.length) out.push({ ame: 'Aucune insuffisance relevée dans cette rubrique.', rec: finPoint('Maintenir les bonnes pratiques observées, notamment : ' + forts.slice(0, 3).join(' ; ')) });
+    if (v === 'S' || v === 'B') out.push({ ame: finPoint(`${el.lib} : niveau satisfaisant, à consolider`), rec: finPoint(conseilOf(f, el)) }); else if (isBon(v)) forts.push(lc(el.lib)); });
+  if (!out.length && forts.length) out.push({ ame: 'Aucune insuffisance constatée dans cette rubrique.', rec: finPoint('Maintenir les pratiques observées, notamment : ' + forts.slice(0, 3).join(' ; ')) });
   return out;
 }
 // Points forts à défaut de critère : actions effectivement réalisées
@@ -2237,9 +2239,9 @@ function posActions(f, filt, n) {
 // Sortie des trois colonnes : constats et recommandations dans le même ordre, sans « Néant »
 function colonnes(f, k, pos, paires, filt, N) {
   if (!pos.length) pos = posActions(f, filt, 2);
-  if (!pos.length) pos = ['Aucun point fort marquant n’a été relevé dans cette rubrique lors de la visite.'];
+  if (!pos.length) pos = ['Aucun point fort significatif observé dans cette rubrique.'];
   if (!paires.length) paires = pairesConsolidation(f, k);
-  if (!paires.length) paires = [{ ame: 'Les éléments de cette rubrique n’ont pas été appréciés lors de la visite.', rec: 'Apprécier chaque critère de cette rubrique lors de la prochaine visite.' }];
+  if (!paires.length) paires = [{ ame: 'Rubrique non appréciée lors de cette visite.', rec: 'Apprécier cette rubrique lors de la prochaine visite.' }];
   const P = []; const seenA = new Set(); paires.forEach(x => { if (!seenA.has(x.ame)) { seenA.add(x.ame); P.push(x); } });
   const sel = P.slice(0, N); const recs = []; sel.forEach(x => { if (x.rec && !recs.includes(x.rec)) recs.push(x.rec); });
   const fmt = (a) => [...new Set(a)].slice(0, N).map(x => '- ' + x).join('\n');
@@ -2251,29 +2253,29 @@ function redigerCanevas(f) {
   const dejaCites = new Set();
   // 1. Pratiques enseignantes clés (rubrique Animation)
   PC.filter(x => x.cote).forEach(x => {
-    if (x.bon) pos.ani.push(`${majus(x.nom)}${x.v ? ' (' + x.v + ')' : ''} : l’enseignant(e) ${x.fort}.`);
+    if (x.bon) pos.ani.push(`${majus(x.nom)} : l’enseignant(e) ${x.fort}.`);
     else { const nf = x.nonFaits.slice(0, 2); nf.forEach(n => dejaCites.add(n.x));
       const manque = nf.map(n => { const g = negation(n.x); return g ? 'l’enseignant(e) ' + g : `« ${n.x} » non fait`; }).concat(x.j.unmet.slice(0, 2).map(lc));
-      P1.ani.push({ ame: finPoint(`${majus(x.nom)}${x.v ? ' (' + x.v + ')' : ''}${manque.length ? ' : ' + manque.join(' ; ') : ' : pratique insuffisante, à renforcer'}`), rec: finPoint(x.rec) }); }
+      P1.ani.push({ ame: finPoint(`${majus(x.nom)}${manque.length ? ' : ' + manque.join(' ; ') : ' : niveau ' + niv(x.v, f) + ' observé lors de la séance'}`), rec: finPoint(x.rec) }); }
   });
   // 2. Étapes du déroulé : chaque action non faite donne un constat et sa recommandation
   const etR = { org: [], ani: [], eva: [] };
   stepsOf(f).forEach(st => { if (st.pre) return; const a = stepAuto(f, st); if (!a.statut || a.statut === 'NA') return; const k = st.dom || SD[st.id] || 'ani'; const d = stepData(f, st);
     if (a.statut === 'R') { etR[k].push(st.nom.replace(/^Calculine : /, 'calculine : ')); return; }
     let n = 0; st.points.forEach((p, i) => { if (d.pts[i] !== false || pointOff(f, st, p) || dejaCites.has(p.x)) return; P2[k].push(paireAction(p, st, d.obs[i])); n++; });
-    if (!n) P2[k].push({ ame: finPoint(`Étape « ${st.nom} » ${a.statut === 'P' ? 'partiellement réalisée' : 'non réalisée'}${d.gobs ? ' : ' + d.gobs.replace(/[.]$/, '') : ''}`), rec: finPoint(`Conduire entièrement l’étape « ${st.nom} » en respectant chacune de ses actions`) });
+    if (!n) P2[k].push({ ame: finPoint(`${nomEt(st)} : étape ${a.statut === 'P' ? 'partiellement réalisée' : 'non réalisée'}${d.gobs ? ' : ' + d.gobs.replace(/[.]$/, '') : ''}`), rec: finPoint(`Conduire entièrement l’étape « ${st.nom} » en respectant chacune de ses actions`) });
   });
   // 3. Autres critères de la grille (pratiques et contenu d'abord, environnement ensuite)
   const autresPos = { org: [], ani: [], eva: [] };
   gridItems('gen', f).forEach(el => {
     if (idsCles.includes(el.id)) return; const j = justify(f, el); const v = j.val || j.sugg; if (!v || v === 'NA' || j.na) return;
     const sc = scaleOf(f).find(x => x.k === v); if (!sc || sc.v === null) return; const k = domKey(el); const perso = !!((f.conseils || {})[el.id] || '').trim();
-    if (isBon(v)) autresPos[k].push({ v: sc.v, t: `${el.lib} (${v})`, pool: poolOf(el) });
+    if (isBon(v)) autresPos[k].push({ v: sc.v, t: `${el.lib} : niveau ${niv(v, f)}.`, pool: poolOf(el) });
     else P3[k].push({ ...paireCritere(f, el, v), v: sc.v, perso, env: poolOf(el) === 'env' });
   });
   const out = {};
   ['org', 'ani', 'eva'].forEach(k => {
-    if (etR[k].length) pos[k].push(`Étapes bien conduites : ${etR[k].slice(0, 4).join(' ; ')}.`);
+    if (etR[k].length) pos[k].push(`Étapes conduites conformément à la démarche : ${etR[k].slice(0, 4).join(' ; ')}.`);
     pick70(autresPos[k].sort((a, b) => b.v - a.v), N).forEach(x => pos[k].push(x.t));
     const g = P3[k].sort((a, b) => (b.perso - a.perso) || (a.env - b.env) || (a.v - b.v));
     // priorité : pratiques clés, puis 2 actions du déroulé, puis critères de la grille, puis le reste des actions
@@ -2292,19 +2294,17 @@ function appreciationTexte(f) {
   const autresFaibles = gridItems(f.kind, f).filter(el => !PC.some(x => x.el.id === el.id)).map(el => { const j = justify(f, el); const v = j.val || j.sugg; return { el, v, sc: (scaleOf(f).find(x => x.k === v) || {}).v }; })
     .filter(x => x.v && x.v !== 'NA' && !isBon(x.v)).sort((a, b) => (poolOf(a.el) === 'env') - (poolOf(b.el) === 'env') || a.sc - b.sc).slice(0, efforts.length ? 1 : 2).map(x => lc(x.el.lib));
   const bonsOrg = gridItems(f.kind, f).filter(el => domKey(el) === 'org' && poolOf(el) === 'prat').every(el => { const v = justify(f, el).val || justify(f, el).sugg; return !v || v === 'NA' || isBon(v); });
-  const qui = f.kind === 'gen' ? 'la prestation' : 'la conduite du soutien aux apprentissages';
   const phrases = [];
   phrases.push(f.kind === 'gen' ? `Prestation ${lab}.` : `Mise en œuvre ${lab} du soutien aux apprentissages.`);
-  const pos = []; if (bonsOrg) pos.push('la séance est bien préparée'); if (forts.length) pos.push('l’enseignant(e) ' + joinEt(forts));
-  if (pos.length) phrases.push(majus(pos.join(' ; ')) + '.');
-  else if (code === 'TS' || code === 'S') phrases.push('La démarche est respectée dans l’ensemble et les apprenant(e)s sont actifs.');
+  const pos = []; if (bonsOrg) pos.push('la séance est préparée'); if (forts.length) pos.push('l’enseignant(e) ' + joinEt(forts));
+  if (pos.length) phrases.push('Points forts : ' + pos.join(' ; ') + '.');
   const eff = efforts.concat(autresFaibles);
-  if (eff.length) phrases.push(`Pour améliorer ${qui}, les efforts doivent porter sur les points suivants : ${eff.join(' ; ')}.`);
+  if (eff.length) phrases.push(`Axes d’amélioration : ${eff.join(' ; ')}.`);
   const ENC = {
-    TS: 'Félicitations pour ce travail de qualité : continuez ainsi et partagez vos bonnes pratiques avec vos collègues.',
-    S: 'Bon travail : poursuivez vos efforts en appliquant les conseils donnés, vous êtes sur la bonne voie.',
-    PS: 'Courage : en appliquant les conseils donnés, des progrès nets seront visibles dès la prochaine visite. L’encadrement reste à votre disposition.',
-    INS: 'Nous vous encourageons vivement à appliquer les conseils donnés ; un accompagnement de proximité vous aidera à progresser rapidement.'
+    TS: 'L’encadrement adresse ses félicitations à l’enseignant(e) et l’invite à partager ses pratiques avec ses collègues.',
+    S: 'L’enseignant(e) est encouragé(e) à poursuivre ses efforts en appliquant les recommandations formulées.',
+    PS: 'L’enseignant(e) est invité(e) à appliquer les recommandations formulées ; un suivi rapproché sera assuré.',
+    INS: 'Un accompagnement de proximité est nécessaire ; l’enseignant(e) est invité(e) à appliquer sans délai les recommandations formulées.'
   };
   phrases.push(ENC[code]);
   return phrases.join(' ').replace(/\d+([,.]\d+)?\s*\/\s*\d+|\d+\s*%/g, '').replace(/\s{2,}/g, ' ').trim();
@@ -2375,8 +2375,8 @@ window.addEventListener('appinstalled', () => { window.__dpfcInstall = null; if 
    L'application compare sa version à celle publiée sur le site (version.json).
    En ligne : la nouvelle version s'installe seule (à l'ouverture) ou d'un toucher ; les nouveautés s'affichent une fois.
    Fichier hors ligne : un bandeau propose de télécharger la nouvelle version. */
-const APP_VERSION = '2026.11.24.1';
-const APP_HISTO = [{"version": "2026.11.24.1", "date": "2026-11-24", "notes": ["Actions essentielles : toutes les étapes restent présentes, mais chacune n’affiche que ses 3 ou 4 actions clés (manipulation, schématisation, questionnement, correction, synthèse…). Environ 40 % d’actions en moins à cocher.", "Le bouton « Afficher toutes les actions » montre la liste complète à tout moment ; une action déjà cochée reste toujours visible.", "Le statut des étapes, les aspects positifs, les aspects à améliorer, les recommandations et le bulletin se calculent sur les actions affichées."]}, {"version": "2026.11.23.1", "date": "2026-11-23", "notes": ["Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » : bande noire sur toute la largeur et lettres blanches, à l’écran, en PDF, à l’impression et dans le Word.", "Bilan de la visite : suppression des diagrammes en barres.", "Aspects positifs, aspects à améliorer et recommandations : plus de « Néant ». Chaque aspect à améliorer (action non faite ou insuffisante) reçoit sa recommandation, dans le même ordre (ex. « L’enseignant(e) ne fait pas ressortir le titre de la séance » → « Faire ressortir le titre de la séance »)."]}, {"version": "2026.11.22.2", "date": "2026-11-22", "notes": ["Nouvelle présentation guidée : « Commencer une visite » depuis l’accueil, puis 8 étapes (Enseignant(e), Activité, En-tête de la séance, Développement, Évaluation, Environnement de la classe, Bilan, Conclusion).", "Étape Activité : choix entre 1. Développement de compétences et 2. Remédiation ; l’identification de l’enseignant(e) est reprise dans le bulletin choisi.", "Chaque étape affiche « Que faire ? », une barre de progression et un bouton « Suivant ».", "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » surligné en noir dans l’aperçu, le PDF et le Word."]}, {"version": "2026.11.22.1", "date": "2026-11-22", "notes": ["Bulletin : selon la classe visitée, les pratiques enseignantes de l’autre cycle sont grisées (au CP, celles du CE-CM ; au CE et au CM, celles du CP).", "Aspects positifs, aspects à améliorer et recommandations du canevas : rédigés d’abord sur les pratiques enseignantes (manipulation, schématisation, questionnement), puis sur les points importants du bilan.", "Appréciation générale sans chiffres : appréciation de la prestation et encouragements."]}, {"version": "2026.11.21.2", "date": "2026-11-21", "notes": ["Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.", "Après chaque mise à jour, les nouveautés s’affichent une fois.", "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."]}, {"version": "2026.11.21.1", "date": "2026-11-21", "notes": ["Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.", "Page d’installation avec codes QR.", "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."]}, {"version": "2026.11.20.1", "date": "2026-11-20", "notes": ["Application installable sur smartphone et ordinateur ; utilisation hors ligne.", "Version d’essai avec identifiant d’appareil et code d’activation (jusqu’au 31 août 2027)."]}];
+const APP_VERSION = '2026.11.24.2';
+const APP_HISTO = [{"version": "2026.11.24.2", "date": "2026-11-24", "notes": ["Rédaction automatique plus professionnelle et plus factuelle : chaque constat commence par l’étape concernée (« Je suis capable (évaluation) : l’enseignant(e) ne vérifie pas les ardoises. »), chaque critère indique son niveau (« Registre d’appel renseigné : niveau insuffisant. »).", "Appréciation générale : « Points forts », « Axes d’amélioration », puis une formule d’encouragement à la troisième personne, adaptée au niveau.", "Suppression des phrases non vérifiées par l’observation."]}, {"version": "2026.11.24.1", "date": "2026-11-24", "notes": ["Actions essentielles : toutes les étapes restent présentes, mais chacune n’affiche que ses 3 ou 4 actions clés (manipulation, schématisation, questionnement, correction, synthèse…). Environ 40 % d’actions en moins à cocher.", "Le bouton « Afficher toutes les actions » montre la liste complète à tout moment ; une action déjà cochée reste toujours visible.", "Le statut des étapes, les aspects positifs, les aspects à améliorer, les recommandations et le bulletin se calculent sur les actions affichées."]}, {"version": "2026.11.23.1", "date": "2026-11-23", "notes": ["Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » : bande noire sur toute la largeur et lettres blanches, à l’écran, en PDF, à l’impression et dans le Word.", "Bilan de la visite : suppression des diagrammes en barres.", "Aspects positifs, aspects à améliorer et recommandations : plus de « Néant ». Chaque aspect à améliorer (action non faite ou insuffisante) reçoit sa recommandation, dans le même ordre (ex. « L’enseignant(e) ne fait pas ressortir le titre de la séance » → « Faire ressortir le titre de la séance »)."]}, {"version": "2026.11.22.2", "date": "2026-11-22", "notes": ["Nouvelle présentation guidée : « Commencer une visite » depuis l’accueil, puis 8 étapes (Enseignant(e), Activité, En-tête de la séance, Développement, Évaluation, Environnement de la classe, Bilan, Conclusion).", "Étape Activité : choix entre 1. Développement de compétences et 2. Remédiation ; l’identification de l’enseignant(e) est reprise dans le bulletin choisi.", "Chaque étape affiche « Que faire ? », une barre de progression et un bouton « Suivant ».", "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » surligné en noir dans l’aperçu, le PDF et le Word."]}, {"version": "2026.11.22.1", "date": "2026-11-22", "notes": ["Bulletin : selon la classe visitée, les pratiques enseignantes de l’autre cycle sont grisées (au CP, celles du CE-CM ; au CE et au CM, celles du CP).", "Aspects positifs, aspects à améliorer et recommandations du canevas : rédigés d’abord sur les pratiques enseignantes (manipulation, schématisation, questionnement), puis sur les points importants du bilan.", "Appréciation générale sans chiffres : appréciation de la prestation et encouragements."]}, {"version": "2026.11.21.2", "date": "2026-11-21", "notes": ["Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.", "Après chaque mise à jour, les nouveautés s’affichent une fois.", "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."]}, {"version": "2026.11.21.1", "date": "2026-11-21", "notes": ["Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.", "Page d’installation avec codes QR.", "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."]}, {"version": "2026.11.20.1", "date": "2026-11-20", "notes": ["Application installable sur smartphone et ordinateur ; utilisation hors ligne.", "Version d’essai avec identifiant d’appareil et code d’activation (jusqu’au 31 août 2027)."]}];
 const MAJ_BASE = () => location.protocol === 'file:' ? SITE_DPFC : './';
 const MAJ = { info: null, t0: Date.now(), last: 0 };
 const vNum = (v) => String(v || '').split('.').map(x => String(+x || 0).padStart(4, '0')).join('.');
@@ -2711,7 +2711,7 @@ function missedPointsLines(f, filterStep) {
 function goodStepsLine(f, filterStep) {
   const ok = stepsOf(f).filter(st => (!filterStep || filterStep(st)) && stepAuto(f, st).statut === 'R');
   const lines = [];
-  if (ok.length) lines.push('Étapes bien conduites : ' + ok.map(s => s.nom).join(' ; ') + '.');
+  if (ok.length) lines.push('Étapes conduites conformément à la démarche : ' + ok.map(s => s.nom).join(' ; ') + '.');
   stepsOf(f).forEach(st => {
     if (filterStep && !filterStep(st)) return;
     const d = stepData(f, st); if (d.gobs && stepAuto(f, st).statut === 'R') lines.push(`${st.nom} : ${d.gobs}`);
@@ -3932,7 +3932,7 @@ function bilanHtml(f) {
   let rows = '';
   bilanSections(f).forEach(sec => {
     rows += `<tr class="pv-sec2"><td colspan="2">${pv(sec.titre)}</td></tr>`;
-    sec.blocs.forEach(b => { rows += `<tr class="pv-sub"><td colspan="2">${pv(b.titre)}</td></tr><tr><td>${li(b.pos, 'Aucun point fort marquant relevé dans cette rubrique.')}</td><td>${li(b.ame, 'Aucune insuffisance relevée dans cette rubrique.')}</td></tr>`; });
+    sec.blocs.forEach(b => { rows += `<tr class="pv-sub"><td colspan="2">${pv(b.titre)}</td></tr><tr><td>${li(b.pos, 'Aucun point fort significatif observé dans cette rubrique.')}</td><td>${li(b.ame, 'Aucune insuffisance constatée dans cette rubrique.')}</td></tr>`; });
   });
   const recs = bilanRecs(f);
   return `${pvHeader(f)}
@@ -3967,7 +3967,7 @@ async function buildBilanDocx(f) {
   const rows = [];
   bilanSections(f).forEach(sec => {
     rows.push({ full: sec.titre });
-    sec.blocs.forEach(b => { rows.push({ full: b.titre }); const r = [b.pos.map(t => '• ' + t).join('\n') || 'Aucun point fort marquant relevé dans cette rubrique.', b.ame.map(t => '• ' + t).join('\n') || 'Aucune insuffisance relevée dans cette rubrique.']; r.centerCols = []; r.split = true; rows.push(r); });
+    sec.blocs.forEach(b => { rows.push({ full: b.titre }); const r = [b.pos.map(t => '• ' + t).join('\n') || 'Aucun point fort significatif observé dans cette rubrique.', b.ame.map(t => '• ' + t).join('\n') || 'Aucune insuffisance constatée dans cette rubrique.']; r.centerCols = []; r.split = true; rows.push(r); });
   });
   x += ctx.tableXml(w2, ['Aspects positifs', 'Aspects à améliorer (→ recommandation)'], rows);
   { const T = pratiquesTexte(f); const X = T.X;

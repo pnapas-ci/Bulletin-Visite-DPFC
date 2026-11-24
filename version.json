@@ -1,12 +1,21 @@
 {
-  "version": "2026.11.24.1",
+  "version": "2026.11.24.2",
   "date": "2026-11-24",
   "notes": [
-    "Actions essentielles : toutes les étapes restent présentes, mais chacune n’affiche que ses 3 ou 4 actions clés (manipulation, schématisation, questionnement, correction, synthèse…). Environ 40 % d’actions en moins à cocher.",
-    "Le bouton « Afficher toutes les actions » montre la liste complète à tout moment ; une action déjà cochée reste toujours visible.",
-    "Le statut des étapes, les aspects positifs, les aspects à améliorer, les recommandations et le bulletin se calculent sur les actions affichées."
+    "Rédaction automatique plus professionnelle et plus factuelle : chaque constat commence par l’étape concernée (« Je suis capable (évaluation) : l’enseignant(e) ne vérifie pas les ardoises. »), chaque critère indique son niveau (« Registre d’appel renseigné : niveau insuffisant. »).",
+    "Appréciation générale : « Points forts », « Axes d’amélioration », puis une formule d’encouragement à la troisième personne, adaptée au niveau.",
+    "Suppression des phrases non vérifiées par l’observation."
   ],
   "historique": [
+    {
+      "version": "2026.11.24.2",
+      "date": "2026-11-24",
+      "notes": [
+        "Rédaction automatique plus professionnelle et plus factuelle : chaque constat commence par l’étape concernée (« Je suis capable (évaluation) : l’enseignant(e) ne vérifie pas les ardoises. »), chaque critère indique son niveau (« Registre d’appel renseigné : niveau insuffisant. »).",
+        "Appréciation générale : « Points forts », « Axes d’amélioration », puis une formule d’encouragement à la troisième personne, adaptée au niveau.",
+        "Suppression des phrases non vérifiées par l’observation."
+      ]
+    },
     {
       "version": "2026.11.24.1",
       "date": "2026-11-24",
