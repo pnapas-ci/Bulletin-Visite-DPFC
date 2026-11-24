@@ -1,12 +1,25 @@
 {
-  "version": "2026.11.24.2",
+  "version": "2026.11.24.3",
   "date": "2026-11-24",
   "notes": [
-    "Rédaction automatique plus professionnelle et plus factuelle : chaque constat commence par l’étape concernée (« Je suis capable (évaluation) : l’enseignant(e) ne vérifie pas les ardoises. »), chaque critère indique son niveau (« Registre d’appel renseigné : niveau insuffisant. »).",
-    "Appréciation générale : « Points forts », « Axes d’amélioration », puis une formule d’encouragement à la troisième personne, adaptée au niveau.",
-    "Suppression des phrases non vérifiées par l’observation."
+    "Bouton « Menu » en haut à droite : Accueil, Nouvelle visite, Visite de classe, Remédiation, Fiches, Bilans, Bases, Plateforme.",
+    "Bouton « Étape X sur 8 · Toutes les étapes » : liste des 8 étapes avec leur état (Terminée, Commencée, À faire) pour passer directement à l’une d’elles.",
+    "Barre du bas : « ← Précédent », « Options » (Enregistrer, Aperçu et bulletin, Fiche entière, Nouvelle visite) et « Suivant → » jusqu’à « Générer le bulletin ».",
+    "Déroulé présenté étape par étape (une étape à la fois, avec pastilles de couleur) ; « Suivant » parcourt chaque étape du déroulé puis passe à l’étape suivante du bulletin.",
+    "Taux de remplissage du bulletin affiché en pourcentage et mis à jour au fur et à mesure."
   ],
   "historique": [
+    {
+      "version": "2026.11.24.3",
+      "date": "2026-11-24",
+      "notes": [
+        "Bouton « Menu » en haut à droite : Accueil, Nouvelle visite, Visite de classe, Remédiation, Fiches, Bilans, Bases, Plateforme.",
+        "Bouton « Étape X sur 8 · Toutes les étapes » : liste des 8 étapes avec leur état (Terminée, Commencée, À faire) pour passer directement à l’une d’elles.",
+        "Barre du bas : « ← Précédent », « Options » (Enregistrer, Aperçu et bulletin, Fiche entière, Nouvelle visite) et « Suivant → » jusqu’à « Générer le bulletin ».",
+        "Déroulé présenté étape par étape (une étape à la fois, avec pastilles de couleur) ; « Suivant » parcourt chaque étape du déroulé puis passe à l’étape suivante du bulletin.",
+        "Taux de remplissage du bulletin affiché en pourcentage et mis à jour au fur et à mesure."
+      ]
+    },
     {
       "version": "2026.11.24.2",
       "date": "2026-11-24",
@@ -69,14 +82,6 @@
         "Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.",
         "Page d’installation avec codes QR.",
         "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."
-      ]
-    },
-    {
-      "version": "2026.11.20.1",
-      "date": "2026-11-20",
-      "notes": [
-        "Application installable sur smartphone et ordinateur ; utilisation hors ligne.",
-        "Version d’essai avec identifiant d’appareil et code d’activation (jusqu’au 31 août 2027)."
       ]
     }
   ]

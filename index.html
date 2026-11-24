@@ -183,27 +183,68 @@ table.t th{background:var(--surface2);font-weight:700;position:sticky;top:0}
 .score{font-variant-numeric:tabular-nums}
 .empty{padding:18px;text-align:center;color:var(--muted)}
 @media (max-width:560px){
-  .brandline small{display:none} .brandline h1{font-size:.98rem} .top{padding-block:8px 0}
-  .tabs{margin-top:6px} .tabs button{padding:7px 9px;font-size:.84rem}
+  .brandline small{font-size:.78rem} .brandline h1{font-size:.98rem} .top{padding-block:8px 0}
   .dock .msg{display:none} .dock .row{flex-wrap:nowrap;gap:6px} .dock .btn{flex:1 1 0;padding:9px 4px;font-size:.82rem;white-space:nowrap}
   .lg{display:none} .toast{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
   main{padding-block:12px 96px} .body{padding:0 12px 12px} .sec>summary{padding:11px 12px}
 }
 @media (min-width:561px){.sm-only{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.menu-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);color:var(--brand-ink);border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:9px 14px;font-weight:700;font-size:.95rem;cursor:pointer;min-height:44px}
+.menu-btn svg{width:20px;height:20px;stroke:currentColor;stroke-width:2.4;fill:none;stroke-linecap:round}
+.tabs{display:flex;flex-direction:column;gap:4px;margin:10px 0 4px;overflow:visible;padding:8px;background:var(--surface);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.tabs[hidden]{display:none}
+.tabs button{background:transparent;border:0;color:var(--ink);opacity:1;padding:12px 14px;border-radius:8px;text-align:left;font-weight:600;font-size:.98rem;cursor:pointer;white-space:normal}
+.tabs button:hover{background:var(--surface2)}
+.tabs button[aria-selected="true"]{background:var(--surface2);color:var(--brand);box-shadow:inset 4px 0 0 var(--brand)}
+.tabs .m-new{color:var(--brand)}
+#where{opacity:.85}
+/* sélecteur d'étapes */
+.st-sel{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:1rem;cursor:pointer;color:var(--ink);min-height:48px}
+.st-sel .caret{margin-left:auto;font-size:.9rem;color:var(--muted)}
+.st-list{display:grid;gap:4px;margin:8px 0;padding:6px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.st-list[hidden]{display:none}
+.st-item{display:flex;align-items:center;gap:10px;background:transparent;border:0;border-radius:8px;padding:10px;text-align:left;font-size:.95rem;cursor:pointer;color:var(--ink)}
+.st-item:hover{background:var(--surface2)}
+.st-item.cur{background:var(--surface2);font-weight:700}
+.st-item .stn{flex:0 0 auto}
+.st-item.ok .stn{background:#2E7D32;color:#fff}
+.st-item.part .stn{background:#E0A100;color:#fff}
+.st-etat{margin-left:auto;font-size:.8rem;color:var(--muted);font-weight:500}
+/* déroulé étape par étape */
+.subnav{margin:6px 0 10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.subnav-h{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between}
+.subchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.subchip{min-width:38px;height:38px;border-radius:50%;border:2px solid var(--line);background:var(--surface);font-weight:700;cursor:pointer;color:var(--ink)}
+.subchip.st-R{background:#2E7D32;border-color:#2E7D32;color:#fff}.subchip.st-P{background:#E0A100;border-color:#E0A100;color:#fff}.subchip.st-N{background:#C62828;border-color:#C62828;color:#fff}.subchip.st-NA{background:var(--surface2);color:var(--muted)}
+.subchip.cur{outline:3px solid var(--brand);outline-offset:2px}
+.subnav-f{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;margin:8px 0 16px}
+/* barre du bas : précédent / options / suivant */
+.dock .nav3{justify-content:space-between;flex-wrap:nowrap;gap:8px}
+.dock .nav3 .btn{flex:1 1 0;min-height:46px;font-size:.95rem}
+.dock .nav3 .btn.more{flex:0 0 auto}
+.dock-menu{max-width:980px;margin:8px auto 0;display:grid;gap:6px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.dock-menu[hidden]{display:none}
+.dock-menu .msg2{grid-column:1/-1;font-size:.85rem;color:var(--muted)}
 </style>
 
 <header class="top">
   <div class="top-in">
-    <div class="brandline"><h1>Bulletin de visite DPFC provisoire</h1><small>Toutes disciplines · CP1 au CM2 · PNAPAS</small></div>
-    <nav class="tabs" role="tablist" id="tabs">
-      <button role="tab" data-tab="home" aria-selected="true">Accueil</button>
-      <button role="tab" data-tab="gen" aria-selected="false">Grille d’observation</button>
-      <button role="tab" data-tab="sou" aria-selected="false">Soutien aux apprentissages</button>
-      <button role="tab" data-tab="bases" aria-selected="false">Bases de données</button>
-      <button role="tab" data-tab="fiches" aria-selected="false">Fiches enregistrées</button>
-      <button role="tab" data-tab="periode" aria-selected="false">Bilans et formation</button>
-      <button role="tab" data-tab="plat" aria-selected="false">Plateforme en ligne</button>
+    <div class="top-row">
+      <div class="brandline"><h1>Bulletin de visite DPFC provisoire</h1><small id="where">Accueil</small></div>
+      <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="tabs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+    </div>
+    <nav class="tabs" id="tabs" hidden aria-label="Menu principal">
+      <button data-tab="home">Accueil</button>
+      <button data-menu-act="visite-neuve" class="m-new">+ Nouvelle visite</button>
+      <button data-tab="gen">Visite de classe : développement de compétences</button>
+      <button data-tab="sou">Remédiation : soutien aux apprentissages</button>
+      <button data-tab="fiches">Fiches enregistrées</button>
+      <button data-tab="periode">Bilans et formation</button>
+      <button data-tab="bases">Bases de données</button>
+      <button data-tab="plat">Plateforme en ligne</button>
     </nav>
   </div>
 </header>
@@ -2018,12 +2059,37 @@ function comptage(f) {
   let pts = 0, ptsTot = 0; stepsOf(f).forEach(st => { const a = stepAuto(f, st); if (a.statut === 'NA') return; pts += a.ans || 0; ptsTot += a.n || 0; });
   return { cot, tot, pts, ptsTot };
 }
+// Taux de remplissage du bulletin : identification, appréciations de la grille, actions du déroulé, rédaction et clôture
+function tauxRemplissage(f) {
+  const c = comptage(f); let req = 0, reqOk = 0;
+  try { const R = reqFields(f); const miss = new Set(missingList(f).map(x => x[0])); req = R.length; reqOk = R.filter(x => !miss.has(x[0])).length; } catch (e) {}
+  const cl = f.cloture || {}; const fin = [!!(f.redac && f.redac.appreciation), !!f.appRetenue, !!cl.entretien, !!cl.emarge];
+  const num = reqOk + c.cot + c.pts + fin.filter(Boolean).length, den = req + c.tot + c.ptsTot + fin.length;
+  return den ? Math.round(100 * num / den) : 0;
+}
+// État de chaque étape du parcours : 'ok' (terminée), 'part' (commencée) ou '' (à faire)
+function etatEtape(f, n) {
+  const e = f.ens || {}; const cl = f.cloture || {};
+  if (n === 1) return e.nom && e.classe ? 'ok' : (e.nom || e.classe) ? 'part' : '';
+  if (n === 2) return f.actOk ? 'ok' : '';
+  if (n === 7) return f.redac && f.redac.appreciation ? 'ok' : '';
+  if (n === 8) { const k = [f.appRetenue, cl.entretien, cl.emarge].filter(Boolean).length; return k === 3 ? 'ok' : k ? 'part' : ''; }
+  const part = { 3: 'entete', 4: 'dev', 5: 'eva', 6: 'env' }[n]; let tot = 0, fait = 0;
+  stepsOf(f).forEach(st => { if (partOfStep(f, st) !== part) return; const a = stepAuto(f, st); tot++; if (a.statut) fait++; });
+  gridItems(f.kind, f).forEach(el => { if (el.extra || partOfItem(f, el) !== part) return; const j = justify(f, el); tot++; if (j.val || j.na) fait++; });
+  if (n === 3 && f.kind === 'gen') { tot++; if (f.seance && f.seance.discipline && f.seance.nature) fait++; }
+  return !tot ? 'ok' : fait === tot ? 'ok' : fait ? 'part' : '';
+}
+const ETAT_LIB = { ok: 'Terminée', part: 'Commencée', '': 'À faire' };
 function stepperBar(f) {
-  const E = etapeDe(f); const c = comptage(f); const lib = (ETAPES.find(([n]) => n === E) || [0, 'Fiche entière'])[1];
+  const E = etapeDe(f); const lib = (ETAPES.find(([n]) => n === E) || [0, 'Fiche entière'])[1]; const t = tauxRemplissage(f);
+  const open = !!(S.stMenu && S.stMenu[f.kind]);
   return `<nav class="stepper" aria-label="Étapes de la visite">
-    <div class="st-top"><span class="st-cur">${E === 'all' ? 'Fiche entière' : `Étape ${E} sur ${NB_ETAPES} · <b>${esc(lib)}</b>`}</span><span class="stc">${c.cot}/${c.tot} éléments cotés · ${c.pts}/${c.ptsTot} actions</span></div>
-    <div class="st-bar" aria-hidden="true"><span style="width:${E === 'all' ? 100 : Math.round(100 * E / NB_ETAPES)}%"></span></div>
-    <div class="chips st-chips">${ETAPES.map(([n, l]) => `<button class="chip" data-act="etape" data-v="${n}" aria-pressed="${E === n}"${E === n ? ' aria-current="step"' : ''}><span class="stn">${n}</span> ${l}</button>`).join('')}<button class="chip" data-act="etape" data-v="all" aria-pressed="${E === 'all'}">Tout afficher</button></div>
+    <button class="st-sel" data-act="st-menu" aria-expanded="${open}"><span class="stn">${E === 'all' ? '≡' : E}</span><span>${E === 'all' ? '<b>Fiche entière</b>' : `Étape ${E} sur ${NB_ETAPES} · <b>${esc(lib)}</b>`}</span><span class="caret">${open ? 'Fermer ▴' : 'Toutes les étapes ▾'}</span></button>
+    <div class="st-list" ${open ? '' : 'hidden'}>${ETAPES.map(([n, l]) => { const et = etatEtape(f, n); return `<button class="st-item ${et}${E === n ? ' cur' : ''}" data-act="etape" data-v="${n}"><span class="stn">${et === 'ok' ? '✓' : n}</span>${esc(l)}<span class="st-etat">${E === n ? 'En cours' : ETAT_LIB[et]}</span></button>`; }).join('')}
+      <button class="st-item${E === 'all' ? ' cur' : ''}" data-act="etape" data-v="all"><span class="stn">≡</span>Afficher toute la fiche sur une page</button></div>
+    <div class="st-top"><span class="stc"><b>Bulletin rempli à ${t} %</b></span><span class="stc">${ETAPES.filter(([n]) => etatEtape(f, n) === 'ok').length}/${NB_ETAPES} étapes terminées</span></div>
+    <div class="st-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${t}" aria-label="Taux de remplissage du bulletin"><span style="width:${t}%"></span></div>
     ${E !== 'all' && AIDE[E] ? `<p class="st-aide"><b>Que faire ?</b> ${esc(AIDE[E])}</p>` : ''}</nav>`;
 }
 function stepNav(f) {
@@ -2137,7 +2203,7 @@ function formSteps(f) {
 // Trouve l'étape qui contient un élément (pour les liens « informations manquantes »)
 function etapeDeCible(f, selector) {
   const probe = document.createElement('div');
-  for (const k of ETAPES.map(x => x[0])) { const keep = S.etape[f.kind]; S.etape[f.kind] = k; probe.innerHTML = formSteps(f); S.etape[f.kind] = keep; if (probe.querySelector(selector)) return k; }
+  PROBE_ALL = true; try { for (const k of ETAPES.map(x => x[0])) { const keep = S.etape[f.kind]; S.etape[f.kind] = k; probe.innerHTML = formSteps(f); S.etape[f.kind] = keep; if (probe.querySelector(selector)) return k; } } finally { PROBE_ALL = false; }
   return 'all';
 }
 /* ========================= RÉDACTION CENTRÉE SUR LES PRATIQUES ENSEIGNANTES =========================
@@ -2375,8 +2441,8 @@ window.addEventListener('appinstalled', () => { window.__dpfcInstall = null; if 
    L'application compare sa version à celle publiée sur le site (version.json).
    En ligne : la nouvelle version s'installe seule (à l'ouverture) ou d'un toucher ; les nouveautés s'affichent une fois.
    Fichier hors ligne : un bandeau propose de télécharger la nouvelle version. */
-const APP_VERSION = '2026.11.24.2';
-const APP_HISTO = [{"version": "2026.11.24.2", "date": "2026-11-24", "notes": ["Rédaction automatique plus professionnelle et plus factuelle : chaque constat commence par l’étape concernée (« Je suis capable (évaluation) : l’enseignant(e) ne vérifie pas les ardoises. »), chaque critère indique son niveau (« Registre d’appel renseigné : niveau insuffisant. »).", "Appréciation générale : « Points forts », « Axes d’amélioration », puis une formule d’encouragement à la troisième personne, adaptée au niveau.", "Suppression des phrases non vérifiées par l’observation."]}, {"version": "2026.11.24.1", "date": "2026-11-24", "notes": ["Actions essentielles : toutes les étapes restent présentes, mais chacune n’affiche que ses 3 ou 4 actions clés (manipulation, schématisation, questionnement, correction, synthèse…). Environ 40 % d’actions en moins à cocher.", "Le bouton « Afficher toutes les actions » montre la liste complète à tout moment ; une action déjà cochée reste toujours visible.", "Le statut des étapes, les aspects positifs, les aspects à améliorer, les recommandations et le bulletin se calculent sur les actions affichées."]}, {"version": "2026.11.23.1", "date": "2026-11-23", "notes": ["Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » : bande noire sur toute la largeur et lettres blanches, à l’écran, en PDF, à l’impression et dans le Word.", "Bilan de la visite : suppression des diagrammes en barres.", "Aspects positifs, aspects à améliorer et recommandations : plus de « Néant ». Chaque aspect à améliorer (action non faite ou insuffisante) reçoit sa recommandation, dans le même ordre (ex. « L’enseignant(e) ne fait pas ressortir le titre de la séance » → « Faire ressortir le titre de la séance »)."]}, {"version": "2026.11.22.2", "date": "2026-11-22", "notes": ["Nouvelle présentation guidée : « Commencer une visite » depuis l’accueil, puis 8 étapes (Enseignant(e), Activité, En-tête de la séance, Développement, Évaluation, Environnement de la classe, Bilan, Conclusion).", "Étape Activité : choix entre 1. Développement de compétences et 2. Remédiation ; l’identification de l’enseignant(e) est reprise dans le bulletin choisi.", "Chaque étape affiche « Que faire ? », une barre de progression et un bouton « Suivant ».", "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » surligné en noir dans l’aperçu, le PDF et le Word."]}, {"version": "2026.11.22.1", "date": "2026-11-22", "notes": ["Bulletin : selon la classe visitée, les pratiques enseignantes de l’autre cycle sont grisées (au CP, celles du CE-CM ; au CE et au CM, celles du CP).", "Aspects positifs, aspects à améliorer et recommandations du canevas : rédigés d’abord sur les pratiques enseignantes (manipulation, schématisation, questionnement), puis sur les points importants du bilan.", "Appréciation générale sans chiffres : appréciation de la prestation et encouragements."]}, {"version": "2026.11.21.2", "date": "2026-11-21", "notes": ["Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.", "Après chaque mise à jour, les nouveautés s’affichent une fois.", "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."]}, {"version": "2026.11.21.1", "date": "2026-11-21", "notes": ["Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.", "Page d’installation avec codes QR.", "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."]}, {"version": "2026.11.20.1", "date": "2026-11-20", "notes": ["Application installable sur smartphone et ordinateur ; utilisation hors ligne.", "Version d’essai avec identifiant d’appareil et code d’activation (jusqu’au 31 août 2027)."]}];
+const APP_VERSION = '2026.11.24.3';
+const APP_HISTO = [{"version": "2026.11.24.3", "date": "2026-11-24", "notes": ["Bouton « Menu » en haut à droite : Accueil, Nouvelle visite, Visite de classe, Remédiation, Fiches, Bilans, Bases, Plateforme.", "Bouton « Étape X sur 8 · Toutes les étapes » : liste des 8 étapes avec leur état (Terminée, Commencée, À faire) pour passer directement à l’une d’elles.", "Barre du bas : « ← Précédent », « Options » (Enregistrer, Aperçu et bulletin, Fiche entière, Nouvelle visite) et « Suivant → » jusqu’à « Générer le bulletin ».", "Déroulé présenté étape par étape (une étape à la fois, avec pastilles de couleur) ; « Suivant » parcourt chaque étape du déroulé puis passe à l’étape suivante du bulletin.", "Taux de remplissage du bulletin affiché en pourcentage et mis à jour au fur et à mesure."]}, {"version": "2026.11.24.2", "date": "2026-11-24", "notes": ["Rédaction automatique plus professionnelle et plus factuelle : chaque constat commence par l’étape concernée (« Je suis capable (évaluation) : l’enseignant(e) ne vérifie pas les ardoises. »), chaque critère indique son niveau (« Registre d’appel renseigné : niveau insuffisant. »).", "Appréciation générale : « Points forts », « Axes d’amélioration », puis une formule d’encouragement à la troisième personne, adaptée au niveau.", "Suppression des phrases non vérifiées par l’observation."]}, {"version": "2026.11.24.1", "date": "2026-11-24", "notes": ["Actions essentielles : toutes les étapes restent présentes, mais chacune n’affiche que ses 3 ou 4 actions clés (manipulation, schématisation, questionnement, correction, synthèse…). Environ 40 % d’actions en moins à cocher.", "Le bouton « Afficher toutes les actions » montre la liste complète à tout moment ; une action déjà cochée reste toujours visible.", "Le statut des étapes, les aspects positifs, les aspects à améliorer, les recommandations et le bulletin se calculent sur les actions affichées."]}, {"version": "2026.11.23.1", "date": "2026-11-23", "notes": ["Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » : bande noire sur toute la largeur et lettres blanches, à l’écran, en PDF, à l’impression et dans le Word.", "Bilan de la visite : suppression des diagrammes en barres.", "Aspects positifs, aspects à améliorer et recommandations : plus de « Néant ». Chaque aspect à améliorer (action non faite ou insuffisante) reçoit sa recommandation, dans le même ordre (ex. « L’enseignant(e) ne fait pas ressortir le titre de la séance » → « Faire ressortir le titre de la séance »)."]}, {"version": "2026.11.22.2", "date": "2026-11-22", "notes": ["Nouvelle présentation guidée : « Commencer une visite » depuis l’accueil, puis 8 étapes (Enseignant(e), Activité, En-tête de la séance, Développement, Évaluation, Environnement de la classe, Bilan, Conclusion).", "Étape Activité : choix entre 1. Développement de compétences et 2. Remédiation ; l’identification de l’enseignant(e) est reprise dans le bulletin choisi.", "Chaque étape affiche « Que faire ? », une barre de progression et un bouton « Suivant ».", "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » surligné en noir dans l’aperçu, le PDF et le Word."]}, {"version": "2026.11.22.1", "date": "2026-11-22", "notes": ["Bulletin : selon la classe visitée, les pratiques enseignantes de l’autre cycle sont grisées (au CP, celles du CE-CM ; au CE et au CM, celles du CP).", "Aspects positifs, aspects à améliorer et recommandations du canevas : rédigés d’abord sur les pratiques enseignantes (manipulation, schématisation, questionnement), puis sur les points importants du bilan.", "Appréciation générale sans chiffres : appréciation de la prestation et encouragements."]}, {"version": "2026.11.21.2", "date": "2026-11-21", "notes": ["Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.", "Après chaque mise à jour, les nouveautés s’affichent une fois.", "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."]}, {"version": "2026.11.21.1", "date": "2026-11-21", "notes": ["Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.", "Page d’installation avec codes QR.", "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."]}];
 const MAJ_BASE = () => location.protocol === 'file:' ? SITE_DPFC : './';
 const MAJ = { info: null, t0: Date.now(), last: 0 };
 const vNum = (v) => String(v || '').split('.').map(x => String(+x || 0).padStart(4, '0')).join('.');
@@ -3085,14 +3151,25 @@ function planSection(f) {
   return sec('plan', 'Plan de session et gestion de la classe', pa.ko.length ? `${pa.ko.length} point${pa.ko.length > 1 ? 's' : ''} à revoir` : '', inner);
 }
 
+let PROBE_ALL = false; let PAGER = null;
+function menuFermer() { const nav = document.getElementById('tabs'); if (nav && !nav.hidden) { nav.hidden = true; const mb = document.getElementById('menu-btn'); if (mb) mb.setAttribute('aria-expanded', 'false'); } }
+const GRILLE_DE = { entete: 'grille-entete', dev: 'grille2', eva: 'grille-eva' };
 function stepsSection(f, part) {
   const steps = stepsOf(f);
   const totals = steps.map(st => stepAuto(f, st));
   const keep = (st) => !part || partOfStep(f, st) === part;
   if (!steps.some(keep)) return '';
   const nR = totals.filter((t, i) => keep(steps[i]) && t.statut === 'R').length; const nK = steps.filter(keep).length;
+  // Déroulé étape par étape : une seule étape affichée, avec boutons Précédente / Suivante
+  const idx = steps.map((st, si) => si).filter(si => keep(steps[si])); const key = f.kind + ':' + (part || 'all');
+  S.sub = S.sub || {}; S.deroulAll = S.deroulAll || {};
+  const pager = part && !PROBE_ALL && !S.deroulAll[key] && idx.length > 1;
+  let curSi = null;
+  if (pager) { curSi = idx.includes(S.sub[key]) ? S.sub[key] : (idx.find(si => !totals[si].statut) ?? idx[0]); S.sub[key] = curSi; }
+  const pos = pager ? idx.indexOf(curSi) : -1;
   const html = steps.map((st, si) => {
     if (!keep(st)) return '';
+    if (pager && si !== curSi) return '';
     const a = totals[si]; const d = stepData(f, st);
     const num = st.pre ? 'Avant' : steps.slice(0, si + 1).filter(x => !x.pre).length;
     if (a.off) return `<div class="step off" id="step-${si}"><div class="step-h"><span class="num">${num}</span><h3>${esc(st.nom)}</h3><span class="status st-NA">Non prévue</span></div>
@@ -3119,9 +3196,17 @@ function stepsSection(f, part) {
         <span class="mention">${a.manual ? 'Choix manuel du conseiller' + (a.auto ? ` (déduit des points : ${ST_LIB[a.auto]})` : '') : a.auto ? 'Déduit des points cochés' : 'Cochez les points pour déduire le statut'}</span>
         <textarea class="inp" data-k="gobs" data-s="${si}" placeholder="Observation générale sur l’étape">${esc(d.gobs)}</textarea></div></div>`;
   }).join('');
+  let navH = '', navF = '';
+  if (pager) {
+    navH = `<div class="subnav"><div class="subnav-h"><b>Étape ${pos + 1} sur ${idx.length} du déroulé</b><button class="linkbtn" data-act="deroul-all" data-k="${key}" data-v="1">Voir tout le déroulé</button></div>
+      <div class="subchips">${idx.map((si, k) => `<button class="subchip st-${totals[si].statut || 0}${si === curSi ? ' cur' : ''}" data-act="sub" data-k="${key}" data-v="${si}" title="${esc(steps[si].nom)}" aria-label="${esc(steps[si].nom)}">${k + 1}</button>`).join('')}</div></div>`;
+    const prevSi = idx[pos - 1], nextSi = idx[pos + 1]; const g = GRILLE_DE[part];
+    PAGER = { key, prevSi, nextSi };
+    navF = `<div class="subnav-f">${prevSi !== undefined ? `<button class="btn" data-act="sub" data-k="${key}" data-v="${prevSi}">← Étape précédente</button>` : '<span></span>'}${nextSi !== undefined ? `<button class="btn primary" data-act="sub" data-k="${key}" data-v="${nextSi}">Étape suivante du déroulé →</button>` : g ? `<button class="btn primary" data-act="goto" data-t="#${g}">Passer aux appréciations ↓</button>` : ''}</div>`;
+  } else if (part && idx.length > 1 && S.deroulAll[key]) navH = `<p class="hint"><button class="linkbtn" data-act="deroul-all" data-k="${key}" data-v="0">Afficher le déroulé étape par étape</button></p>`;
   const T0 = f.kind === 'gen' ? `Déroulé de la séance · ${natLib(f.seance.nature)}` : 'Déroulé de l’activité';
   const title = part === 'entete' ? 'Avant la séance : préparation' : part === 'eva' ? 'Déroulé de l’évaluation' : part === 'dev' ? (f.kind === 'gen' ? `Déroulé du développement · ${natLib(f.seance.nature)}` : 'Déroulé de l’activité') : T0;
-  return sec(part && part !== 'dev' ? 'steps-' + part : 'steps', title, `${nK} étape${nK > 1 ? 's' : ''} · ${nR} réalisée${nR > 1 ? 's' : ''}`, `<div class="pts-mode">${f.ptsComplet ? '<b>Toutes les actions</b> sont affichées.' : '<b>Actions essentielles</b> : chaque étape garde ses actions clés.'} <button class="btn sm" data-act="pts-mode" data-v="${f.ptsComplet ? '0' : '1'}">${f.ptsComplet ? 'Revenir aux actions essentielles' : 'Afficher toutes les actions'}</button></div><p class="hint">Pour chaque étape, cochez ce que l’enseignant.e fait et les questions posées. Le statut se déduit tout seul ; vous pouvez le changer d’un toucher.</p>${html}`);
+  return sec(part && part !== 'dev' ? 'steps-' + part : 'steps', title, `${nK} étape${nK > 1 ? 's' : ''} · ${nR} réalisée${nR > 1 ? 's' : ''}`, `<div class="pts-mode">${f.ptsComplet ? '<b>Toutes les actions</b> sont affichées.' : '<b>Actions essentielles</b> : chaque étape garde ses actions clés.'} <button class="btn sm" data-act="pts-mode" data-v="${f.ptsComplet ? '0' : '1'}">${f.ptsComplet ? 'Revenir aux actions essentielles' : 'Afficher toutes les actions'}</button></div><p class="hint">Pour chaque étape, cochez ce que l’enseignant.e fait et les questions posées. Le statut se déduit tout seul ; vous pouvez le changer d’un toucher.</p>${navH}${html}${navF}`);
 }
 
 function grilleSection(f) { return grillePart(f, 'env') + grillePart(f, 'prat'); }
@@ -3187,17 +3272,25 @@ function signSection(f) {
 }
 
 function render() {
-  document.querySelectorAll('#tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === S.tab));
+  document.querySelectorAll('#tabs button[data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === S.tab)));
+  const W = { home: 'Accueil', fiches: 'Fiches enregistrées', periode: 'Bilans et formation', bases: 'Bases de données', plat: 'Plateforme en ligne' };
+  const wh = document.getElementById('where'); if (wh) { if (S.tab === 'gen' || S.tab === 'sou') { const f0 = cur(); const E0 = etapeDe(f0); wh.textContent = (S.tab === 'gen' ? 'Développement de compétences' : 'Remédiation') + (S.preview[f0.kind] ? ' · aperçu du bulletin' : E0 === 'all' ? ' · fiche entière' : ` · étape ${E0}/${NB_ETAPES}`) + ` · rempli à ${tauxRemplissage(f0)} %`; } else wh.textContent = W[S.tab] || ''; }
   const v = $('#view'); const dock = $('#dock');
   if (S.tab === 'gen' || S.tab === 'sou') {
     const f = cur(); REQ = new Set(reqFields(f).map(x => x[0])); SHOWMISS = !!S.showMissing[f.kind];
     const miss = missingList(f);
     const missPanel = SHOWMISS && miss.length ? `<div class="sec missp"><div class="body" style="padding-top:14px"><h2 style="font-size:1rem">Informations obligatoires manquantes (${miss.length})</h2><p class="hint">Le bulletin Word sera produit quand tout sera renseigné. Un critère ou une étape qui ne s’applique pas à cette séance peut être exclu avec « Non applicable ».</p><ul class="misslist">${miss.map(m => `<li><button class="linkbtn" data-act="goto" data-t="${esc(m.t)}">${esc(m.l)}</button></li>`).join('')}</ul></div></div>` : (SHOWMISS && !miss.length ? '<div class="callout">Toutes les informations obligatoires sont renseignées : vous pouvez produire le bulletin Word.</div>' : '');
+    PAGER = null;
     if (S.preview[f.kind]) { v.innerHTML = (baseStatus(f) && baseStatus(f).etat !== 'identique' ? `<div class="sec"><div class="body" style="padding-top:12px">${baseBanner(f)}</div></div>` : '') + previewView(f); }
     else v.innerHTML = missPanel + formSteps(f);
     dock.hidden = false;
-    dock.innerHTML = `<div class="row"><span class="msg">${miss.length ? `${miss.length} information${miss.length > 1 ? 's' : ''} obligatoire${miss.length > 1 ? 's' : ''} à compléter` : 'Fiche complète'} · brouillon enregistré sur cet appareil</span>
-      <button class="btn" data-act="new">Nouvelle<span class="lg"> fiche</span></button><button class="btn" data-act="save">Enregistrer<span class="lg"> la fiche</span></button>${S.preview[f.kind] ? '<button class="btn" data-act="pv-back">Retour<span class="lg"> à la saisie</span></button><button class="btn primary" data-act="word">Canevas Word</button><button class="btn primary" data-act="pdf">Canevas PDF</button><button class="btn brand" data-act="bilan-word">Bilan Word</button><button class="btn brand" data-act="bilan-pdf">Bilan PDF</button>' : '<button class="btn primary" data-act="genbull">Générer<span class="lg"> la</span> fiche</button>'}</div>`;
+    const msg = `${miss.length ? `${miss.length} information${miss.length > 1 ? 's' : ''} obligatoire${miss.length > 1 ? 's' : ''} à compléter` : 'Fiche complète'} · rempli à ${tauxRemplissage(f)} % · brouillon enregistré sur cet appareil`;
+    if (S.preview[f.kind]) dock.innerHTML = `<div class="row"><span class="msg">${msg}</span><button class="btn" data-act="pv-back">← Retour<span class="lg"> à la saisie</span></button><button class="btn primary" data-act="word">Canevas Word</button><button class="btn primary" data-act="pdf">Canevas PDF</button><button class="btn brand" data-act="bilan-word">Bilan Word</button><button class="btn brand" data-act="bilan-pdf">Bilan PDF</button></div>`;
+    else { const E = etapeDe(f); const prev = E === 'all' ? null : ETAPES.find(([n]) => n === E - 1), next = E === 'all' ? null : ETAPES.find(([n]) => n === E + 1); const bloque = E === 2 && !f.actOk;
+      dock.innerHTML = `<div class="row nav3">${E === 'all' ? `<button class="btn" data-act="etape" data-v="1">← Revenir aux étapes</button>` : (PAGER && PAGER.prevSi !== undefined ? `<button class="btn" data-act="sub" data-k="${PAGER.key}" data-v="${PAGER.prevSi}">← Précédent</button>` : `<button class="btn" data-act="etape" data-v="${prev ? prev[0] : 1}" ${prev ? '' : 'disabled'}>← Précédent</button>`)}
+        <button class="btn more" data-act="dock-more" aria-expanded="${!!S.dockMore}">⋯ Options</button>
+        ${PAGER && PAGER.nextSi !== undefined ? `<button class="btn primary" data-act="sub" data-k="${PAGER.key}" data-v="${PAGER.nextSi}">Suivant →</button>` : next ? `<button class="btn primary" data-act="etape" data-v="${next[0]}" ${bloque ? 'disabled title="Choisissez d’abord l’activité"' : ''}>Suivant →</button>` : `<button class="btn primary" data-act="genbull">Générer le bulletin</button>`}</div>
+        <div class="dock-menu" ${S.dockMore ? '' : 'hidden'}><span class="msg2">${msg}</span><button class="btn" data-act="save">Enregistrer la fiche</button><button class="btn" data-act="genbull">Aperçu et bulletin Word / PDF</button><button class="btn" data-act="etape" data-v="all">Afficher toute la fiche</button><button class="btn" data-act="visite-neuve">Nouvelle visite</button></div>`; }
   } else if (S.tab === 'home') { v.innerHTML = homeView(); dock.hidden = true; }
   else if (S.tab === 'bases') { v.innerHTML = basesView(); dock.hidden = true; }
   else if (S.tab === 'periode') { v.innerHTML = periodeView(); dock.hidden = true; }
@@ -3355,9 +3448,13 @@ document.addEventListener('change', (ev) => {
   persistDraft(); keepScroll(render);
 });
 document.addEventListener('click', (ev) => {
-  const tb = ev.target.closest('#tabs button'); if (tb) { S.tab = tb.dataset.tab; render(); window.scrollTo(0, 0); return; }
+  const mb = ev.target.closest('#menu-btn'); if (mb) { const nav = $('#tabs'); nav.hidden = !nav.hidden; mb.setAttribute('aria-expanded', String(!nav.hidden)); return; }
+  const tb = ev.target.closest('#tabs button[data-tab]'); if (tb) { menuFermer(); S.tab = tb.dataset.tab; render(); window.scrollTo(0, 0); return; }
+  const tm = ev.target.closest('#tabs button[data-menu-act]'); if (tm) { menuFermer(); const fake = document.createElement('button'); fake.dataset.act = tm.dataset.menuAct; document.body.appendChild(fake); fake.click(); fake.remove(); return; }
+  if (!ev.target.closest('#tabs')) menuFermer();
   const b = ev.target.closest('[data-act]'); if (!b) return;
   const act = b.dataset.act;
+  if (act !== 'dock-more') S.dockMore = false;
   if (/^(pl-|plper-|mi-)/.test(act)) { plAction(act, b); return; }
   const f = (S.tab === 'gen' || S.tab === 'sou') ? cur() : null;
   const steps = f ? stepsOf(f) : [];
@@ -3367,7 +3464,8 @@ document.addEventListener('click', (ev) => {
     case 'calc': { const nat = DEMARCHES[f.seance.nature] ? f.seance.nature : 'acquisition'; f.calc = f.calc || {}; f.calc[nat] = b.dataset.v; break; }
     case 'stat': { const st = steps[+b.dataset.s]; const d = stepData(f, st); d.statut = b.dataset.v || null; break; }
     case 'na': { const el = gridItems(f.kind, f).find(x => x.id === b.dataset.e); const d = elData(f, el); d.na = naEff(f, el) ? false : true; break; }
-    case 'goto': { if (!document.querySelector(b.dataset.t) && etapeDe(f) !== 'all') { S.etape[f.kind] = etapeDeCible(f, b.dataset.t); render(); } const t = document.querySelector(b.dataset.t); if (t) { const det = t.closest('details.sec'); if (det && !det.open) { det.open = true; S.open[det.dataset.sec] = true; } t.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (t.focus) t.focus({ preventScroll: true }); } return; }
+    case 'goto': { const mS = /^#step-(\d+)$/.exec(b.dataset.t); if (mS && !document.querySelector(b.dataset.t)) { const st = stepsOf(f)[+mS[1]]; if (st) { S.sub = S.sub || {}; S.sub[f.kind + ':' + partOfStep(f, st)] = +mS[1]; } }
+      if (!document.querySelector(b.dataset.t) && etapeDe(f) !== 'all') { S.etape[f.kind] = etapeDeCible(f, b.dataset.t); render(); } const t = document.querySelector(b.dataset.t); if (t) { const det = t.closest('details.sec'); if (det && !det.open) { det.open = true; S.open[det.dataset.sec] = true; } t.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (t.focus) t.focus({ preventScroll: true }); } return; }
     case 'val': { const el = gridItems(f.kind, f).find(x => x.id === b.dataset.e); const d = elData(f, el); if (b.dataset.v === 'NA') { d.na = naEff(f, el) ? false : true; break; } if (naEff(f, el)) d.na = false; const j = justify(f, el); d.val = (d.val === b.dataset.v || (!d.val && j.sugg === b.dataset.v)) ? null : b.dataset.v; break; }
     case 'valauto': { const el = gridItems(f.kind, f).find(x => x.id === b.dataset.e); elData(f, el).val = null; break; }
     case 'ind': { const el = gridItems(f.kind, f).find(x => x.id === b.dataset.e); const d = elData(f, el); const v = b.dataset.v === '1'; const i = b.dataset.i; d.ind[i] = d.ind[i] === v ? undefined : v; break; }
@@ -3395,6 +3493,10 @@ document.addEventListener('click', (ev) => {
       render(); window.scrollTo(0, 0); if (v === 'autres' && ficheEnCours(S.gen).vide) { const t = document.querySelector('[data-sec="seance"]'); if (t) t.scrollIntoView({ block: 'start' }); } return; }
     case 'install': if (window.__dpfcInstall) { const e = window.__dpfcInstall; e.prompt(); e.userChoice.then(() => { window.__dpfcInstall = null; render(); }); } return;
     case 'copier-lien': { const l = b.dataset.v; (navigator.clipboard ? navigator.clipboard.writeText(l) : Promise.reject()).then(() => toast('Lien copié : ' + l), () => toast(l)); return; }
+    case 'st-menu': { S.stMenu = S.stMenu || {}; S.stMenu[f.kind] = !S.stMenu[f.kind]; render(); return; }
+    case 'dock-more': { S.dockMore = !S.dockMore; render(); return; }
+    case 'sub': { S.sub = S.sub || {}; S.sub[b.dataset.k] = +b.dataset.v; render(); const el = document.getElementById('step-' + b.dataset.v); if (el) el.scrollIntoView({ block: 'start' }); window.scrollBy(0, -70); return; }
+    case 'deroul-all': { S.deroulAll = S.deroulAll || {}; S.deroulAll[b.dataset.k] = b.dataset.v === '1'; render(); return; }
     case 'pts-mode': { f.ptsComplet = b.dataset.v === '1'; persistDraft(); render(); return; }
     case 'choisir-act': { const v = b.dataset.v; const src = f; const dst = v === 'gen' ? S.gen : S.sou;
       if (src !== dst) { dst.ens = { ...(dst.ens || {}), ...(src.ens || {}) }; if (src.date) dst.date = src.date; }
@@ -3402,7 +3504,7 @@ document.addEventListener('click', (ev) => {
     case 'visite-neuve': { // la fiche en cours (non vide) est d'abord enregistrée, pour ne rien perdre
       [S.gen, S.sou].forEach(x => { if (!ficheEnCours(x).vide) { const i = S.fiches.findIndex(y => y.id === x.id); const c = JSON.parse(JSON.stringify(x)); if (i >= 0) S.fiches[i] = c; else S.fiches.push(c); } }); LS.set('gv_fiches', S.fiches);
       S.gen = newGen(); S.sou = newSou(); persistDraft(); S.tab = 'gen'; S.preview.gen = false; S.etape = { gen: 1, sou: 1 }; render(); window.scrollTo(0, 0); toast('Nouvelle visite : commencez par identifier l’enseignant(e).'); return; }
-    case 'etape': { S.etape = S.etape || {}; S.etape[f.kind] = b.dataset.v === 'all' ? 'all' : +b.dataset.v; render(); const st = document.querySelector('.stepper'); if (st) st.scrollIntoView({ block: 'start' }); return; }
+    case 'etape': { S.stMenu = {}; S.dockMore = false; S.etape = S.etape || {}; S.etape[f.kind] = b.dataset.v === 'all' ? 'all' : +b.dataset.v; render(); const st = document.querySelector('.stepper'); if (st) st.scrollIntoView({ block: 'start' }); return; }
     case 'app-ret': f.appRetenue = f.appRetenue === b.dataset.v ? '' : b.dataset.v; appliquerRetenue(f); break;
     case 'clot': f.cloture = f.cloture || {}; f.cloture[b.dataset.v] = !f.cloture[b.dataset.v]; break;
     case 'conseils-guide': f.conseils = f.conseils || {}; defaillances(f).forEach(({ el }) => { if (!(f.conseils[el.id] || '').trim()) f.conseils[el.id] = el.rec; }); break;
