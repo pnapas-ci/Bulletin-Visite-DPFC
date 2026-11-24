@@ -1,12 +1,21 @@
 {
-  "version": "2026.11.23.1",
-  "date": "2026-11-23",
+  "version": "2026.11.24.1",
+  "date": "2026-11-24",
   "notes": [
-    "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » : bande noire sur toute la largeur et lettres blanches, à l’écran, en PDF, à l’impression et dans le Word.",
-    "Bilan de la visite : suppression des diagrammes en barres.",
-    "Aspects positifs, aspects à améliorer et recommandations : plus de « Néant ». Chaque aspect à améliorer (action non faite ou insuffisante) reçoit sa recommandation, dans le même ordre (ex. « L’enseignant(e) ne fait pas ressortir le titre de la séance » → « Faire ressortir le titre de la séance »)."
+    "Actions essentielles : toutes les étapes restent présentes, mais chacune n’affiche que ses 3 ou 4 actions clés (manipulation, schématisation, questionnement, correction, synthèse…). Environ 40 % d’actions en moins à cocher.",
+    "Le bouton « Afficher toutes les actions » montre la liste complète à tout moment ; une action déjà cochée reste toujours visible.",
+    "Le statut des étapes, les aspects positifs, les aspects à améliorer, les recommandations et le bulletin se calculent sur les actions affichées."
   ],
   "historique": [
+    {
+      "version": "2026.11.24.1",
+      "date": "2026-11-24",
+      "notes": [
+        "Actions essentielles : toutes les étapes restent présentes, mais chacune n’affiche que ses 3 ou 4 actions clés (manipulation, schématisation, questionnement, correction, synthèse…). Environ 40 % d’actions en moins à cocher.",
+        "Le bouton « Afficher toutes les actions » montre la liste complète à tout moment ; une action déjà cochée reste toujours visible.",
+        "Le statut des étapes, les aspects positifs, les aspects à améliorer, les recommandations et le bulletin se calculent sur les actions affichées."
+      ]
+    },
     {
       "version": "2026.11.23.1",
       "date": "2026-11-23",

@@ -154,6 +154,7 @@ label.f.miss input,label.f.miss select,label.f.miss textarea{border-color:var(--
 .st-chips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:thin}.st-chips .chip{flex:0 0 auto}
 .st-aide{margin:8px 0 0;padding:9px 12px;border-left:4px solid var(--brand);background:var(--surface2);border-radius:6px;font-size:.92rem}
 .act-card{width:100%}.act-card.sel{border:2px solid var(--brand);box-shadow:0 0 0 3px rgba(0,0,0,.04)}.act-n{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:var(--brand);color:#fff;font-weight:700;font-size:1.2rem}
+.pts-mode{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:8px 12px;margin:4px 0 10px;background:var(--surface2);border-radius:8px;font-size:.92rem}.pts-more{margin:4px 0 0}
 .part-h{margin:22px 0 6px;font-size:1.05rem;display:flex;gap:6px;align-items:center}
 .h-start{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
 .h-go{display:inline-flex;gap:10px;align-items:center;font-size:1.12rem;padding:14px 22px;min-height:52px}.h-go svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2}
@@ -2374,8 +2375,8 @@ window.addEventListener('appinstalled', () => { window.__dpfcInstall = null; if 
    L'application compare sa version à celle publiée sur le site (version.json).
    En ligne : la nouvelle version s'installe seule (à l'ouverture) ou d'un toucher ; les nouveautés s'affichent une fois.
    Fichier hors ligne : un bandeau propose de télécharger la nouvelle version. */
-const APP_VERSION = '2026.11.23.1';
-const APP_HISTO = [{"version": "2026.11.23.1", "date": "2026-11-23", "notes": ["Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » : bande noire sur toute la largeur et lettres blanches, à l’écran, en PDF, à l’impression et dans le Word.", "Bilan de la visite : suppression des diagrammes en barres.", "Aspects positifs, aspects à améliorer et recommandations : plus de « Néant ». Chaque aspect à améliorer (action non faite ou insuffisante) reçoit sa recommandation, dans le même ordre (ex. « L’enseignant(e) ne fait pas ressortir le titre de la séance » → « Faire ressortir le titre de la séance »)."]}, {"version": "2026.11.22.2", "date": "2026-11-22", "notes": ["Nouvelle présentation guidée : « Commencer une visite » depuis l’accueil, puis 8 étapes (Enseignant(e), Activité, En-tête de la séance, Développement, Évaluation, Environnement de la classe, Bilan, Conclusion).", "Étape Activité : choix entre 1. Développement de compétences et 2. Remédiation ; l’identification de l’enseignant(e) est reprise dans le bulletin choisi.", "Chaque étape affiche « Que faire ? », une barre de progression et un bouton « Suivant ».", "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » surligné en noir dans l’aperçu, le PDF et le Word."]}, {"version": "2026.11.22.1", "date": "2026-11-22", "notes": ["Bulletin : selon la classe visitée, les pratiques enseignantes de l’autre cycle sont grisées (au CP, celles du CE-CM ; au CE et au CM, celles du CP).", "Aspects positifs, aspects à améliorer et recommandations du canevas : rédigés d’abord sur les pratiques enseignantes (manipulation, schématisation, questionnement), puis sur les points importants du bilan.", "Appréciation générale sans chiffres : appréciation de la prestation et encouragements."]}, {"version": "2026.11.21.2", "date": "2026-11-21", "notes": ["Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.", "Après chaque mise à jour, les nouveautés s’affichent une fois.", "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."]}, {"version": "2026.11.21.1", "date": "2026-11-21", "notes": ["Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.", "Page d’installation avec codes QR.", "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."]}, {"version": "2026.11.20.1", "date": "2026-11-20", "notes": ["Application installable sur smartphone et ordinateur ; utilisation hors ligne.", "Version d’essai avec identifiant d’appareil et code d’activation (jusqu’au 31 août 2027)."]}];
+const APP_VERSION = '2026.11.24.1';
+const APP_HISTO = [{"version": "2026.11.24.1", "date": "2026-11-24", "notes": ["Actions essentielles : toutes les étapes restent présentes, mais chacune n’affiche que ses 3 ou 4 actions clés (manipulation, schématisation, questionnement, correction, synthèse…). Environ 40 % d’actions en moins à cocher.", "Le bouton « Afficher toutes les actions » montre la liste complète à tout moment ; une action déjà cochée reste toujours visible.", "Le statut des étapes, les aspects positifs, les aspects à améliorer, les recommandations et le bulletin se calculent sur les actions affichées."]}, {"version": "2026.11.23.1", "date": "2026-11-23", "notes": ["Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » : bande noire sur toute la largeur et lettres blanches, à l’écran, en PDF, à l’impression et dans le Word.", "Bilan de la visite : suppression des diagrammes en barres.", "Aspects positifs, aspects à améliorer et recommandations : plus de « Néant ». Chaque aspect à améliorer (action non faite ou insuffisante) reçoit sa recommandation, dans le même ordre (ex. « L’enseignant(e) ne fait pas ressortir le titre de la séance » → « Faire ressortir le titre de la séance »)."]}, {"version": "2026.11.22.2", "date": "2026-11-22", "notes": ["Nouvelle présentation guidée : « Commencer une visite » depuis l’accueil, puis 8 étapes (Enseignant(e), Activité, En-tête de la séance, Développement, Évaluation, Environnement de la classe, Bilan, Conclusion).", "Étape Activité : choix entre 1. Développement de compétences et 2. Remédiation ; l’identification de l’enseignant(e) est reprise dans le bulletin choisi.", "Chaque étape affiche « Que faire ? », une barre de progression et un bouton « Suivant ».", "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » surligné en noir dans l’aperçu, le PDF et le Word."]}, {"version": "2026.11.22.1", "date": "2026-11-22", "notes": ["Bulletin : selon la classe visitée, les pratiques enseignantes de l’autre cycle sont grisées (au CP, celles du CE-CM ; au CE et au CM, celles du CP).", "Aspects positifs, aspects à améliorer et recommandations du canevas : rédigés d’abord sur les pratiques enseignantes (manipulation, schématisation, questionnement), puis sur les points importants du bilan.", "Appréciation générale sans chiffres : appréciation de la prestation et encouragements."]}, {"version": "2026.11.21.2", "date": "2026-11-21", "notes": ["Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.", "Après chaque mise à jour, les nouveautés s’affichent une fois.", "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."]}, {"version": "2026.11.21.1", "date": "2026-11-21", "notes": ["Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.", "Page d’installation avec codes QR.", "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."]}, {"version": "2026.11.20.1", "date": "2026-11-20", "notes": ["Application installable sur smartphone et ordinateur ; utilisation hors ligne.", "Version d’essai avec identifiant d’appareil et code d’activation (jusqu’au 31 août 2027)."]}];
 const MAJ_BASE = () => location.protocol === 'file:' ? SITE_DPFC : './';
 const MAJ = { info: null, t0: Date.now(), last: 0 };
 const vNum = (v) => String(v || '').split('.').map(x => String(+x || 0).padStart(4, '0')).join('.');
@@ -2534,12 +2535,37 @@ function stepOff(f, st) {
   return '';
 }
 function pointOff(f, st, p) { return typeof p.si === 'function' && !p.si(f); }
+/* ---------- Actions essentielles : chaque étape garde ses actions clés (vue allégée par défaut) ---------- */
+const ESS_CACHE = new WeakMap();
+const RE_CLE = /manipul|schémat|ardoise|comment as-tu|comment sais-tu|comment avez-vous|pourquoi|justifi|feed-back|voix haute|silencieus|la martinière|plm|corrig|qu’avez-vous appris|synthèse|titre de la séance|valide|routine|questionnement|circule/i;
+const RE_LOGIST = /^(Distribue|Se fait aider|Place le matériel|Place |Donne la règle|Range|Ramasse|Remet le matériel|Fait ranger)/;
+const TAG_PTS = { eval: 3, correction: 3, demarche: 2, consigne: 2, objectif: 2, tc: 1, tg: 1, ti: 1, appreciation: 1, interaction: 1, participation: 1, circulation: 2 };
+function essentiels(points) {
+  if (ESS_CACHE.has(points)) return ESS_CACHE.get(points);
+  const n = points.length; const K = n <= 3 ? n : n <= 7 ? 3 : 4;
+  const sc = points.map((p, i) => { const g = p.g || []; let v = 0; if (RE_CLE.test(p.x)) v += 6; if (g.includes('question')) v += 1; g.forEach(t => v += TAG_PTS[t] || 0);
+    if (RE_LOGIST.test(p.x)) v -= 4; if (i === 0) v += 2; if (i === n - 1) v += 1; return { i, v, q: g.includes('question') && !RE_CLE.test(p.x), cond: typeof p.si === 'function' }; });
+  const chosen = new Set(); let nq = 0;
+  // une action conditionnelle (selon la séance) est gardée avec sa variante : elle ne compte pas dans la limite
+  sc.forEach(x => { if (x.cond && sc.some(y => y.cond && y.i !== x.i && Math.abs(y.i - x.i) === 1) && x.i <= 1) chosen.add(x.i); });
+  const base = chosen.size;
+  const take = (x) => { if (chosen.size - base >= K || chosen.has(x.i) || (x.q && nq >= 1)) return; chosen.add(x.i); if (x.q) nq++; };
+  const order = sc.slice().sort((a, b) => b.v - a.v || a.i - b.i);
+  // 1. une action par famille (démarche, consigne, évaluation, correction…) pour garder le lien avec la grille
+  const fam = new Set(); order.forEach(x => { const t = (points[x.i].g || []).find(t => TAG_PTS[t] >= 2 && !fam.has(t)); if (t && x.v > 0) { fam.add(t); take(x); } });
+  // 2. puis les plus importantes
+  order.forEach(x => take(x));
+  ESS_CACHE.set(points, chosen); return chosen;
+}
+// Une action est masquée en vue allégée si elle n'est pas essentielle et n'a encore reçu ni réponse ni observation
+function pointHidden(f, st, i) { if (f.ptsComplet) return false; const d = stepData(f, st); if (d.pts[i] !== undefined || (d.obs[i] !== undefined && d.obs[i] !== null)) return false; return !essentiels(st.points).has(i); }
+function ptsVus(f, st) { const out = []; st.points.forEach((p, i) => { if (!pointHidden(f, st, i)) out.push({ p, i, L: String.fromCharCode(97 + out.length) }); }); return out; }
 function stepAuto(f, st) {
-  const d = stepData(f, st); let n = st.points.length;
+  const d = stepData(f, st); const vus = ptsVus(f, st); let n = vus.length;
   const off = !d.reint && stepOff(f, st);
   if (off) return { done: 0, ans: n, n: 0, na: n, total: n, auto: 'NA', statut: 'NA', manual: false, off };
   let done = 0, ans = 0, na = 0;
-  st.points.forEach((p, i) => { const v = d.pts[i] === undefined && pointOff(f, st, p) ? 'NA' : d.pts[i]; if (v === true) { done++; ans++; } else if (v === false) ans++; else if (v === 'NA') na++; });
+  vus.forEach(({ p, i }) => { const v = d.pts[i] === undefined && pointOff(f, st, p) ? 'NA' : d.pts[i]; if (v === true) { done++; ans++; } else if (v === false) ans++; else if (v === 'NA') na++; });
   const total = n; n -= na;
   let auto = null;
   if ((f.kind === 'sou' && st.het && f.typeClasse === 'homogene') || (total > 0 && na === total)) auto = 'NA';
@@ -3072,9 +3098,10 @@ function stepsSection(f, part) {
     if (a.off) return `<div class="step off" id="step-${si}"><div class="step-h"><span class="num">${num}</span><h3>${esc(st.nom)}</h3><span class="status st-NA">Non prévue</span></div>
       <p class="hint">Grisée d’office : ${esc(a.off)}.</p><div class="row">${st.soutien ? '<button class="btn sm primary" data-act="soutien-fait">Une activité de soutien a été menée</button>' : `<button class="btn sm" data-act="reint" data-s="${si}">Réintégrer cette étape</button>`}</div></div>`;
     const isQ = (p) => p.t === 'Q';
-    const pts = st.points.map((p, i) => {
+    const vus = ptsVus(f, st); const nCach = st.points.length - vus.length;
+    const pts = vus.map(({ p, i, L }) => {
       const off = d.pts[i] === undefined && pointOff(f, st, p); const v = off ? 'NA' : d.pts[i]; const hasObs = d.obs[i] !== undefined && d.obs[i] !== null;
-      return `<li class="pt${off ? ' off' : ''}"><span class="kind A">Action</span><span class="pt-txt"><b>${String.fromCharCode(97 + i)}.</b> ${esc(p.x)}</span>
+      return `<li class="pt${off ? ' off' : ''}"><span class="kind A">Action</span><span class="pt-txt"><b>${L}.</b> ${esc(p.x)}</span>
         <span class="yn"><button class="yes ${v === true ? 'on' : ''}" data-act="pt" data-s="${si}" data-i="${i}" data-v="1">${isQ(p) ? 'Posée' : 'Fait'}</button><button class="no ${v === false ? 'on' : ''}" data-act="pt" data-s="${si}" data-i="${i}" data-v="0">${isQ(p) ? 'Non posée' : 'Non fait'}</button><button class="na ${v === 'NA' ? 'on' : ''}" data-act="pt" data-s="${si}" data-i="${i}" data-v="na" title="Non applicable">N/A</button></span>
         <div class="more">${hasObs ? `<textarea class="inp" rows="1" data-k="pobs" data-s="${si}" data-i="${i}" placeholder="Observation sur ce point">${esc(d.obs[i])}</textarea>` : `<button class="linkbtn" data-act="addobs" data-s="${si}" data-i="${i}">+ Observation</button>`}</div></li>`;
     }).join('');
@@ -3086,7 +3113,7 @@ function stepsSection(f, part) {
       <div class="deroule"><b>Déroulé attendu :</b> ${esc(st.deroule)}</div>
       ${st.soutien ? `<div class="callout">Activité de soutien observée avec la fiche « Soutien aux apprentissages ». <div class="row" style="margin-top:6px"><button class="btn sm primary" data-act="soutien-ouvrir">${f.soutienFicheId ? 'Ouvrir la fiche de soutien liée' : 'Remplir la fiche de soutien aux apprentissages'}</button><button class="btn sm" data-act="soutien-annule">Pas d’activité de soutien</button></div></div>` : ''}
       ${d.reint ? `<p class="hint">Étape réintégrée par le conseiller. <button class="linkbtn" data-act="reint-off" data-s="${si}">La griser à nouveau</button></p>` : ''}
-      <ul class="pts">${pts}</ul>
+      <ul class="pts">${pts}</ul>${nCach ? `<p class="hint pts-more">${nCach} action${nCach > 1 ? 's' : ''} secondaire${nCach > 1 ? 's' : ''} non affichée${nCach > 1 ? 's' : ''}. <button class="linkbtn" data-act="pts-mode" data-v="1">Afficher toutes les actions</button></p>` : ''}
       <div class="step-f"><div class="row"><span class="hint">Statut de l’étape :</span>${opts.map(o => `<button class="chip" data-act="stat" data-s="${si}" data-v="${o}" aria-pressed="${a.statut === o}">${ST_LIB[o]}</button>`).join('')}
         ${a.manual ? `<button class="linkbtn" data-act="stat" data-s="${si}" data-v="">Revenir au statut déduit</button>` : ''}</div>
         <span class="mention">${a.manual ? 'Choix manuel du conseiller' + (a.auto ? ` (déduit des points : ${ST_LIB[a.auto]})` : '') : a.auto ? 'Déduit des points cochés' : 'Cochez les points pour déduire le statut'}</span>
@@ -3094,7 +3121,7 @@ function stepsSection(f, part) {
   }).join('');
   const T0 = f.kind === 'gen' ? `Déroulé de la séance · ${natLib(f.seance.nature)}` : 'Déroulé de l’activité';
   const title = part === 'entete' ? 'Avant la séance : préparation' : part === 'eva' ? 'Déroulé de l’évaluation' : part === 'dev' ? (f.kind === 'gen' ? `Déroulé du développement · ${natLib(f.seance.nature)}` : 'Déroulé de l’activité') : T0;
-  return sec(part && part !== 'dev' ? 'steps-' + part : 'steps', title, `${nK} étape${nK > 1 ? 's' : ''} · ${nR} réalisée${nR > 1 ? 's' : ''}`, `<p class="hint">Pour chaque étape, cochez ce que l’enseignant.e fait et les questions posées. Le statut se déduit tout seul ; vous pouvez le changer d’un toucher.</p>${html}`);
+  return sec(part && part !== 'dev' ? 'steps-' + part : 'steps', title, `${nK} étape${nK > 1 ? 's' : ''} · ${nR} réalisée${nR > 1 ? 's' : ''}`, `<div class="pts-mode">${f.ptsComplet ? '<b>Toutes les actions</b> sont affichées.' : '<b>Actions essentielles</b> : chaque étape garde ses actions clés.'} <button class="btn sm" data-act="pts-mode" data-v="${f.ptsComplet ? '0' : '1'}">${f.ptsComplet ? 'Revenir aux actions essentielles' : 'Afficher toutes les actions'}</button></div><p class="hint">Pour chaque étape, cochez ce que l’enseignant.e fait et les questions posées. Le statut se déduit tout seul ; vous pouvez le changer d’un toucher.</p>${html}`);
 }
 
 function grilleSection(f) { return grillePart(f, 'env') + grillePart(f, 'prat'); }
@@ -3368,6 +3395,7 @@ document.addEventListener('click', (ev) => {
       render(); window.scrollTo(0, 0); if (v === 'autres' && ficheEnCours(S.gen).vide) { const t = document.querySelector('[data-sec="seance"]'); if (t) t.scrollIntoView({ block: 'start' }); } return; }
     case 'install': if (window.__dpfcInstall) { const e = window.__dpfcInstall; e.prompt(); e.userChoice.then(() => { window.__dpfcInstall = null; render(); }); } return;
     case 'copier-lien': { const l = b.dataset.v; (navigator.clipboard ? navigator.clipboard.writeText(l) : Promise.reject()).then(() => toast('Lien copié : ' + l), () => toast(l)); return; }
+    case 'pts-mode': { f.ptsComplet = b.dataset.v === '1'; persistDraft(); render(); return; }
     case 'choisir-act': { const v = b.dataset.v; const src = f; const dst = v === 'gen' ? S.gen : S.sou;
       if (src !== dst) { dst.ens = { ...(dst.ens || {}), ...(src.ens || {}) }; if (src.date) dst.date = src.date; }
       dst.actOk = true; if (v === 'gen' && typeof syncNiveau === 'function') syncNiveau(dst); S.tab = v; S.preview[v] = false; S.etape = S.etape || {}; S.etape[v] = 3; render(); window.scrollTo(0, 0); return; }
@@ -3558,9 +3586,9 @@ function pvSteps(f) {
     const a = stepAuto(f, st); const d = stepData(f, st);
     const num = st.pre ? 'Avant la séance' : 'Étape ' + stepsOf(f).slice(0, si + 1).filter(x => !x.pre).length;
     rows += `<tr class="pv-sub"><td colspan="4">${pv(num)} – ${pv(st.nom)} : ${pv(a.statut ? ST_LIB[a.statut] : 'Non renseignée')}${a.statut && a.statut !== 'NA' ? ` (${a.done}/${a.n} effectués)` : ''}${d.gobs ? ' — ' + pv(d.gobs) : ''}</td></tr>`;
-    st.points.forEach((p, i) => {
+    ptsVus(f, st).forEach(({ p, i, L }) => {
       const v = d.pts[i]; const c = a.statut === 'NA' || v === 'NA' ? 'N/A' : v === true ? 'Fait' : v === false ? 'Non fait' : '—';
-      rows += `<tr><td class="pv-c">${String.fromCharCode(97 + i)}.</td><td>${pv(p.x)}</td><td class="pv-c ${v === false ? 'pv-ko' : ''}">${c}</td><td>${pv(d.obs[i])}</td></tr>`;
+      rows += `<tr><td class="pv-c">${L}.</td><td>${pv(p.x)}</td><td class="pv-c ${v === false ? 'pv-ko' : ''}">${c}</td><td>${pv(d.obs[i])}</td></tr>`;
     });
   });
   return `<table class="pv-t"><thead><tr><th>N°</th><th>Action attendue</th><th>Constat</th><th>Observation</th></tr></thead><tbody>${rows}</tbody></table>`;
@@ -4786,10 +4814,10 @@ function stepsAnnexRows(f) {
   stepsOf(f).forEach((st, si) => {
     const a = stepAuto(f, st); const d = stepData(f, st);
     rows.push({ full: `${st.pre ? '' : 'Étape ' + stepsOf(f).slice(0, si + 1).filter(x => !x.pre).length + ' – '}${st.nom} : ${a.statut ? ST_LIB[a.statut] : 'Non renseignée'}${a.statut === 'NA' ? '' : ` (${a.done}/${a.n} effectués)`}${a.manual ? ' – statut fixé par le conseiller' : a.auto ? ' – déduit des points cochés' : ''}${d.gobs ? '\nObservation : ' + d.gobs : ''}` });
-    st.points.forEach((p, i) => {
+    ptsVus(f, st).forEach(({ p, i, L }) => {
       const v = d.pts[i];
       const constat = a.statut === 'NA' || v === 'NA' ? 'Non applicable' : v === true ? 'Fait' : v === false ? 'Non fait' : 'Non observé';
-      rows.push([`${st.pre ? 'Av' : stepsOf(f).slice(0, si + 1).filter(x => !x.pre).length}.${String.fromCharCode(97 + i)}`, p.x, constat, d.obs[i] || '']);
+      rows.push([`${st.pre ? 'Av' : stepsOf(f).slice(0, si + 1).filter(x => !x.pre).length}.${L}`, p.x, constat, d.obs[i] || '']);
     });
   });
   return rows;
