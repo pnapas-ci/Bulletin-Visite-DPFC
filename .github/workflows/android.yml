@@ -21,6 +21,10 @@ jobs:
           if [ -z "$KS_B64" ]; then echo "::warning::Ajoutez les secrets ANDROID_KS et ANDROID_KS_PASS (Settings > Secrets and variables > Actions) pour construire l'APK."; echo "ok=non" >> $GITHUB_OUTPUT; exit 0; fi
           echo "$KS_B64" | base64 -d > android/app/ks.jks; echo "ok=oui" >> $GITHUB_OUTPUT
         env: { KS_B64: '${{ secrets.ANDROID_KS }}' }
+      - name: Vérification de la construction (sans clé)
+        if: steps.cle.outputs.ok != 'oui'
+        working-directory: android
+        run: gradle assembleDebug --no-daemon --stacktrace
       - name: Construction de l'APK
         if: steps.cle.outputs.ok == 'oui'
         working-directory: android
