@@ -3,7 +3,7 @@
 Outil numérique de rédaction des bulletins de visite de classe (DPFC – PNAPAS), utilisable en ligne et hors ligne.
 
 - **Application** : `index.html` (page d'accueil du site)
-- **Version d'essai** : le lien de l'application (`index.html`, ou `essai.html`) donne un essai de 7 semaines à chaque appareil, à compter de sa première ouverture. Chaque appareil reçoit un identifiant (ESSAI-XXXX-XXXX), affiché en haut de l'écran. Après l'essai, l'outil demande le code d'activation (licence) lié à cet identifiant, valable jusqu'au 31 août 2027.
+- **Version d'essai** : le lien de l'application (`index.html`, ou `essai.html`) donne un essai de 7 jours à chaque appareil, à compter de sa première ouverture. Chaque appareil reçoit un identifiant (ESSAI-XXXX-XXXX), affiché en haut de l'écran. Après l'essai, l'outil demande le code d'activation (licence) lié à cet identifiant, valable jusqu'au 31 août 2027.
 - **Téléchargements** (dossier `telechargements/`) : fichier hors ligne, version d'essai et paquet du site.
 - **Serveur de la plateforme** : `Code_serveur_Google_Apps_Script.gs` (voir `LISEZ-MOI.txt`).
 

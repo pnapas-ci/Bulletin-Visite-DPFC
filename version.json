@@ -1,12 +1,19 @@
 {
-  "version": "2026.11.25.1",
+  "version": "2026.11.25.2",
   "date": "2026-11-25",
   "notes": [
-    "Version d’essai de 7 semaines pour chaque appareil qui ouvre le lien, à compter de sa première ouverture ; le nombre de jours restants s’affiche en haut de l’écran.",
-    "Après l’essai, licence active sur saisie du code d’activation reçu à partir de l’identifiant de l’appareil (valable jusqu’au 31 août 2027).",
-    "Le lien principal de l’application, la page d’essai et le fichier téléchargeable appliquent tous la même règle."
+    "Version d’essai de 7 jours pour chaque appareil qui ouvre le lien, à compter de sa première ouverture ; le nombre de jours restants s’affiche en haut de l’écran.",
+    "Après l’essai, licence active sur saisie du code d’activation reçu à partir de l’identifiant de l’appareil (valable jusqu’au 31 août 2027)."
   ],
   "historique": [
+    {
+      "version": "2026.11.25.2",
+      "date": "2026-11-25",
+      "notes": [
+        "Version d’essai de 7 jours pour chaque appareil qui ouvre le lien, à compter de sa première ouverture ; le nombre de jours restants s’affiche en haut de l’écran.",
+        "Après l’essai, licence active sur saisie du code d’activation reçu à partir de l’identifiant de l’appareil (valable jusqu’au 31 août 2027)."
+      ]
+    },
     {
       "version": "2026.11.25.1",
       "date": "2026-11-25",
@@ -71,15 +78,6 @@
         "Bulletin : selon la classe visitée, les pratiques enseignantes de l’autre cycle sont grisées (au CP, celles du CE-CM ; au CE et au CM, celles du CP).",
         "Aspects positifs, aspects à améliorer et recommandations du canevas : rédigés d’abord sur les pratiques enseignantes (manipulation, schématisation, questionnement), puis sur les points importants du bilan.",
         "Appréciation générale sans chiffres : appréciation de la prestation et encouragements."
-      ]
-    },
-    {
-      "version": "2026.11.21.2",
-      "date": "2026-11-21",
-      "notes": [
-        "Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.",
-        "Après chaque mise à jour, les nouveautés s’affichent une fois.",
-        "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."
       ]
     }
   ]
