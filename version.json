@@ -1,11 +1,21 @@
 {
-  "version": "2026.11.25.2",
+  "version": "2026.11.25.3",
   "date": "2026-11-25",
   "notes": [
-    "Version d’essai de 7 jours pour chaque appareil qui ouvre le lien, à compter de sa première ouverture ; le nombre de jours restants s’affiche en haut de l’écran.",
-    "Après l’essai, licence active sur saisie du code d’activation reçu à partir de l’identifiant de l’appareil (valable jusqu’au 31 août 2027)."
+    "Nouvelle présentation en menus déroulants : 1. Identification de l’enseignant(e), 2. Environnement de la classe, 3. Choix de la discipline, 4. Bilan et rédaction automatique, 5. Conclusion et bulletin.",
+    "Dans la discipline : A. Développement de compétences (séances de la planification par semaine → séance choisie → Présentation, Développement, Évaluation → étapes → actions) et B. Soutien aux apprentissages.",
+    "Chaque menu affiche son état (À faire, Commencé, Terminé) ; le pourcentage de remplissage reste affiché en haut."
   ],
   "historique": [
+    {
+      "version": "2026.11.25.3",
+      "date": "2026-11-25",
+      "notes": [
+        "Nouvelle présentation en menus déroulants : 1. Identification de l’enseignant(e), 2. Environnement de la classe, 3. Choix de la discipline, 4. Bilan et rédaction automatique, 5. Conclusion et bulletin.",
+        "Dans la discipline : A. Développement de compétences (séances de la planification par semaine → séance choisie → Présentation, Développement, Évaluation → étapes → actions) et B. Soutien aux apprentissages.",
+        "Chaque menu affiche son état (À faire, Commencé, Terminé) ; le pourcentage de remplissage reste affiché en haut."
+      ]
+    },
     {
       "version": "2026.11.25.2",
       "date": "2026-11-25",
@@ -69,15 +79,6 @@
         "Étape Activité : choix entre 1. Développement de compétences et 2. Remédiation ; l’identification de l’enseignant(e) est reprise dans le bulletin choisi.",
         "Chaque étape affiche « Que faire ? », une barre de progression et un bouton « Suivant ».",
         "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » surligné en noir dans l’aperçu, le PDF et le Word."
-      ]
-    },
-    {
-      "version": "2026.11.22.1",
-      "date": "2026-11-22",
-      "notes": [
-        "Bulletin : selon la classe visitée, les pratiques enseignantes de l’autre cycle sont grisées (au CP, celles du CE-CM ; au CE et au CM, celles du CP).",
-        "Aspects positifs, aspects à améliorer et recommandations du canevas : rédigés d’abord sur les pratiques enseignantes (manipulation, schématisation, questionnement), puis sur les points importants du bilan.",
-        "Appréciation générale sans chiffres : appréciation de la prestation et encouragements."
       ]
     }
   ]
