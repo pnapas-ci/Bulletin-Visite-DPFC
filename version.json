@@ -1,14 +1,21 @@
 {
-  "version": "2026.11.24.3",
-  "date": "2026-11-24",
+  "version": "2026.11.25.1",
+  "date": "2026-11-25",
   "notes": [
-    "Bouton « Menu » en haut à droite : Accueil, Nouvelle visite, Visite de classe, Remédiation, Fiches, Bilans, Bases, Plateforme.",
-    "Bouton « Étape X sur 8 · Toutes les étapes » : liste des 8 étapes avec leur état (Terminée, Commencée, À faire) pour passer directement à l’une d’elles.",
-    "Barre du bas : « ← Précédent », « Options » (Enregistrer, Aperçu et bulletin, Fiche entière, Nouvelle visite) et « Suivant → » jusqu’à « Générer le bulletin ».",
-    "Déroulé présenté étape par étape (une étape à la fois, avec pastilles de couleur) ; « Suivant » parcourt chaque étape du déroulé puis passe à l’étape suivante du bulletin.",
-    "Taux de remplissage du bulletin affiché en pourcentage et mis à jour au fur et à mesure."
+    "Version d’essai de 7 semaines pour chaque appareil qui ouvre le lien, à compter de sa première ouverture ; le nombre de jours restants s’affiche en haut de l’écran.",
+    "Après l’essai, licence active sur saisie du code d’activation reçu à partir de l’identifiant de l’appareil (valable jusqu’au 31 août 2027).",
+    "Le lien principal de l’application, la page d’essai et le fichier téléchargeable appliquent tous la même règle."
   ],
   "historique": [
+    {
+      "version": "2026.11.25.1",
+      "date": "2026-11-25",
+      "notes": [
+        "Version d’essai de 7 semaines pour chaque appareil qui ouvre le lien, à compter de sa première ouverture ; le nombre de jours restants s’affiche en haut de l’écran.",
+        "Après l’essai, licence active sur saisie du code d’activation reçu à partir de l’identifiant de l’appareil (valable jusqu’au 31 août 2027).",
+        "Le lien principal de l’application, la page d’essai et le fichier téléchargeable appliquent tous la même règle."
+      ]
+    },
     {
       "version": "2026.11.24.3",
       "date": "2026-11-24",
@@ -73,15 +80,6 @@
         "Mises à jour automatiques : l’application vérifie s’il existe une nouvelle version et se met à jour seule.",
         "Après chaque mise à jour, les nouveautés s’affichent une fois.",
         "Numéro de version et bouton « Rechercher une mise à jour » sur l’écran d’accueil."
-      ]
-    },
-    {
-      "version": "2026.11.21.1",
-      "date": "2026-11-21",
-      "notes": [
-        "Nouvel écran d’accueil : reprise de la fiche en cours, nouvelles visites, activité, installation.",
-        "Page d’installation avec codes QR.",
-        "Visite en 4 étapes, synthèse chiffrée, conseils par défaillance, appréciation retenue et clôture."
       ]
     }
   ]
