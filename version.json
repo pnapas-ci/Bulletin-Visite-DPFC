@@ -1,12 +1,19 @@
 {
-  "version": "2026.11.25.3",
+  "version": "2026.11.25.4",
   "date": "2026-11-25",
   "notes": [
-    "Nouvelle présentation en menus déroulants : 1. Identification de l’enseignant(e), 2. Environnement de la classe, 3. Choix de la discipline, 4. Bilan et rédaction automatique, 5. Conclusion et bulletin.",
-    "Dans la discipline : A. Développement de compétences (séances de la planification par semaine → séance choisie → Présentation, Développement, Évaluation → étapes → actions) et B. Soutien aux apprentissages.",
-    "Chaque menu affiche son état (À faire, Commencé, Terminé) ; le pourcentage de remplissage reste affiché en haut."
+    "Page « Installer » : rubrique « Télécharger l’application » (fichier hors ligne).",
+    "Préparation de l’application Android (APK)."
   ],
   "historique": [
+    {
+      "version": "2026.11.25.4",
+      "date": "2026-11-25",
+      "notes": [
+        "Page « Installer » : rubrique « Télécharger l’application » (fichier hors ligne).",
+        "Préparation de l’application Android (APK)."
+      ]
+    },
     {
       "version": "2026.11.25.3",
       "date": "2026-11-25",
@@ -69,16 +76,6 @@
         "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » : bande noire sur toute la largeur et lettres blanches, à l’écran, en PDF, à l’impression et dans le Word.",
         "Bilan de la visite : suppression des diagrammes en barres.",
         "Aspects positifs, aspects à améliorer et recommandations : plus de « Néant ». Chaque aspect à améliorer (action non faite ou insuffisante) reçoit sa recommandation, dans le même ordre (ex. « L’enseignant(e) ne fait pas ressortir le titre de la séance » → « Faire ressortir le titre de la séance »)."
-      ]
-    },
-    {
-      "version": "2026.11.22.2",
-      "date": "2026-11-22",
-      "notes": [
-        "Nouvelle présentation guidée : « Commencer une visite » depuis l’accueil, puis 8 étapes (Enseignant(e), Activité, En-tête de la séance, Développement, Évaluation, Environnement de la classe, Bilan, Conclusion).",
-        "Étape Activité : choix entre 1. Développement de compétences et 2. Remédiation ; l’identification de l’enseignant(e) est reprise dans le bulletin choisi.",
-        "Chaque étape affiche « Que faire ? », une barre de progression et un bouton « Suivant ».",
-        "Titre « BULLETIN DE VISITE DE CLASSE : DÉVELOPPEMENT DE COMPÉTENCES » surligné en noir dans l’aperçu, le PDF et le Word."
       ]
     }
   ]

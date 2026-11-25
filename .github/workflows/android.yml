@@ -1,0 +1,43 @@
+name: Application Android
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', '.github/workflows/android.yml']
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: '8.7' }
+      - name: Clé de signature
+        id: cle
+        run: |
+          if [ -z "$KS_B64" ]; then echo "::warning::Ajoutez les secrets ANDROID_KS et ANDROID_KS_PASS (Settings > Secrets and variables > Actions) pour construire l'APK."; echo "ok=non" >> $GITHUB_OUTPUT; exit 0; fi
+          echo "$KS_B64" | base64 -d > android/app/ks.jks; echo "ok=oui" >> $GITHUB_OUTPUT
+        env: { KS_B64: '${{ secrets.ANDROID_KS }}' }
+      - name: Construction de l'APK
+        if: steps.cle.outputs.ok == 'oui'
+        working-directory: android
+        run: gradle assembleRelease --no-daemon --stacktrace
+        env:
+          KS_FILE: ks.jks
+          KS_PASS: '${{ secrets.ANDROID_KS_PASS }}'
+          KS_ALIAS: bulletin
+          VERSION_CODE: '${{ github.run_number }}'
+          VERSION_NAME: '1.${{ github.run_number }}'
+      - name: Publication
+        if: steps.cle.outputs.ok == 'oui'
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk Bulletin-de-visite.apk
+          gh release delete android --yes --cleanup-tag || true
+          gh release create android Bulletin-de-visite.apk --title "Application Android – Bulletin de visite" --notes "Application Android (version 1.${{ github.run_number }}). Téléchargez Bulletin-de-visite.apk, ouvrez-le et autorisez l'installation."
+        env: { GH_TOKEN: '${{ github.token }}' }
+      - uses: actions/upload-artifact@v4
+        if: steps.cle.outputs.ok == 'oui'
+        with: { name: Bulletin-de-visite-apk, path: Bulletin-de-visite.apk }

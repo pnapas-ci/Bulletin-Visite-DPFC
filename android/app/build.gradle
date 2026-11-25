@@ -1,0 +1,22 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'ci.pnapas.bulletinvisite'
+    compileSdk 34
+    defaultConfig {
+        applicationId "ci.pnapas.bulletinvisite"
+        minSdk 24
+        targetSdk 34
+        versionCode((System.getenv("VERSION_CODE") ?: "1") as int)
+        versionName(System.getenv("VERSION_NAME") ?: "1.0")
+    }
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("KS_FILE") ?: "ks.jks")
+            storePassword System.getenv("KS_PASS")
+            keyAlias System.getenv("KS_ALIAS") ?: "bulletin"
+            keyPassword System.getenv("KS_PASS")
+        }
+    }
+    buildTypes { release { minifyEnabled false; signingConfig signingConfigs.release } }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
